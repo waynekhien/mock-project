@@ -10,6 +10,7 @@ import {
   Clock,
   Tag,
 } from "lucide-react";
+import './fontawesome';
 
 const categories = [
   "điện gia dụng",
