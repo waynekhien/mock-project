@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Book } from '../types';
+import type { Book } from '../../types';
 
 interface ProductCardProps {
   book: Book;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { booksApi } from '../services/api';
-import type { Category } from '../types';
+import { booksApi } from '../../services/api';
+import type { Category } from '../../types';
 
 interface CategoriesProps {
   className?: string;
@@ -22,7 +22,7 @@ const Categories: React.FC<CategoriesProps> = ({
         setLoading(true);
         setError(null);
 
-        // Get all books and extract unique categories
+        
         const books = await booksApi.getAll();
         const uniqueCategories = new Map<number, Category>();
 

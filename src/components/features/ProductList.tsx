@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { booksApi } from '../services/api';
-import type { Book, Category } from '../types';
+import { booksApi } from '../../services/api';
+import type { Book, Category } from '../../types';
 import ProductCard from './ProductCard';
-import { Pagination } from './ui';
+import { Pagination } from '../ui';
 
 interface ProductListProps {
   className?: string;
