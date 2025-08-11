@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { booksApi } from '../services/api';
 import type { Book, Category } from '../types';
 import ProductCard from './ProductCard';
+import { Pagination } from './ui';
 
 interface ProductListProps {
   className?: string;
@@ -17,6 +18,9 @@ const ProductList: React.FC<ProductListProps> = ({
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  
+  const ITEMS_PER_PAGE = 20;
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -41,6 +45,7 @@ const ProductList: React.FC<ProductListProps> = ({
     };
 
     fetchBooks();
+    setCurrentPage(1); // Reset về trang 1 khi category thay đổi
   }, [selectedCategory]);
 
   const handleRetry = () => {
@@ -49,6 +54,18 @@ const ProductList: React.FC<ProductListProps> = ({
     // Re-trigger useEffect
     window.location.reload();
   };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // Scroll to top khi chuyển trang
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Tính toán sản phẩm cho trang hiện tại
+  const totalItems = books.length;
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentBooks = books.slice(startIndex, endIndex);
 
   if (loading) {
     return (
@@ -133,8 +150,8 @@ const ProductList: React.FC<ProductListProps> = ({
         </div>
 
         {/* Books Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-          {books.map((book) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-8">
+          {currentBooks.map((book) => (
             <ProductCard
               key={book.id}
               book={book}
@@ -143,6 +160,15 @@ const ProductList: React.FC<ProductListProps> = ({
             />
           ))}
         </div>
+
+        {/* Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalItems={totalItems}
+          itemsPerPage={ITEMS_PER_PAGE}
+          onPageChange={handlePageChange}
+          className="mt-8"
+        />
       </div>
     </div>
   );

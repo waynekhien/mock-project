@@ -6,6 +6,7 @@ export { default as Modal } from './Modal';
 export { default as Loading, Skeleton, Spinner } from './Loading';
 export { default as Badge } from './Badge';
 export { default as Alert } from './Alert';
+export { default as Pagination } from './Pagination';
 export { 
   Card, 
   CardHeader, 
