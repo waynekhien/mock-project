@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { booksApi } from '../../services/api';
-import type { Category } from '../../types';
+import { booksApi } from '../../../services/api';
+import type { Category } from '../../../types';
 
 interface CategoriesProps {
   className?: string;

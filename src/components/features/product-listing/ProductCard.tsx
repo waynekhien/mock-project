@@ -1,5 +1,6 @@
 import React from 'react';
-import type { Book } from '../../types';
+import { useNavigate } from 'react-router-dom';
+import type { Book } from '../../../types';
 
 interface ProductCardProps {
   book: Book;
@@ -7,14 +8,19 @@ interface ProductCardProps {
   onBookClick?: (book: Book) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ 
-  book, 
-  className = '', 
-  onBookClick 
+const ProductCard: React.FC<ProductCardProps> = ({
+  book,
+  className = '',
+  onBookClick
 }) => {
+  const navigate = useNavigate();
+
   const handleClick = () => {
     if (onBookClick) {
       onBookClick(book);
+    } else {
+      // Default behavior: navigate to product detail page
+      navigate(`/product/${book.id}`);
     }
   };
 

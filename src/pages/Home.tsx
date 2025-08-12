@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   BadgeCheck,
   Truck,
@@ -37,10 +38,13 @@ const commitments = [
 ];
 
 export default function Home() {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
 
   const handleBookClick = (book: Book) => {
     console.log('Selected book:', book);
+    // Navigate to product detail page
+    navigate(`/product/${book.id}`);
   };
 
   const handleCategorySelect = (category: Category) => {
