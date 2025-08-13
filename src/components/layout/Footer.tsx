@@ -1,8 +1,5 @@
 import React from "react";
-import {
-  Phone,
-  Play,
-} from "lucide-react";
+import { Phone, Play } from "lucide-react";
 import payMethodImage from "../../assets/payMethod.png";
 import facebookImage from "../../assets/facebook.png";
 import zaloImage from "../../assets/zalo.png";
@@ -21,21 +18,17 @@ const Footer: React.FC = () => {
                 <span>Hotline: 1900-6035</span>
               </li>
               <li className="text-xs text-gray-500">(1000 đ/phút, 8-21h cả T7, CN)</li>
-              <li><a href="https://hotro.tiki.vn/knowledge-base" className="hover:text-blue-600" target="_blank" rel="noopener noreferrer">Các câu hỏi thường gặp</a></li>
-              <li><a href="https://hotro.tiki.vn/knowledge-base" className="hover:text-blue-600" target="_blank" rel="noopener noreferrer">Gửi yêu cầu hỗ trợ</a></li>
-              <li><a href="#" className="hover:text-blue-600">Hướng dẫn đặt hàng</a></li>
-              <li><a href="#" className="hover:text-blue-600">Phương thức vận chuyển</a></li>
-              <li><a href="#" className="hover:text-blue-600">Chính sách kiểm hàng</a></li>
-              <li><a href="#" className="hover:text-blue-600">Chính sách đổi trả</a></li>
-              <li><a href="#" className="hover:text-blue-600">Hướng dẫn trả góp</a></li>
-              <li><a href="#" className="hover:text-blue-600">Chính sách hàng nhập khẩu</a></li>
-              <li className="mt-4">
-                <p className="text-xs">Hỗ trợ khách hàng:</p>
-                <p className="text-xs">hotro@tiki.vn</p>
-              </li>
-              <li>
-                <p className="text-xs">Báo lỗi bảo mật:</p>
-                <p className="text-xs">security@tiki.vn</p>
+              <li><a href="https://hotro.tiki.vn/knowledge-base" className="hover:text-blue-600 transition-colors" target="_blank" rel="noopener noreferrer">Các câu hỏi thường gặp</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Gửi yêu cầu hỗ trợ</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Hướng dẫn đặt hàng</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Phương thức vận chuyển</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Chính sách kiểm hàng</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Chính sách đổi trả</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Hướng dẫn trả góp</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Chính sách hàng nhập khẩu</a></li>
+              <li className="mt-4 space-y-1">
+                <p className="text-xs">Hỗ trợ khách hàng: hotro@tiki.vn</p>
+                <p className="text-xs">Báo lỗi bảo mật: security@tiki.vn</p>
               </li>
             </ul>
           </div>
@@ -44,17 +37,17 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-sm font-semibold mb-4 text-gray-900">Về Tiki</h3>
             <ul className="space-y-2 text-sm">
-              <li><a href="#" className="hover:text-blue-600">Giới thiệu Tiki</a></li>
-              <li><a href="#" className="hover:text-blue-600">Tiki Blog</a></li>
-              <li><a href="#" className="hover:text-blue-600">Tuyển dụng</a></li>
-              <li><a href="#" className="hover:text-blue-600">Chính sách bảo mật thanh toán</a></li>
-              <li><a href="#" className="hover:text-blue-600">Chính sách bảo mật thông tin cá nhân</a></li>
-              <li><a href="#" className="hover:text-blue-600">Chính sách giải quyết khiếu nại</a></li>
-              <li><a href="#" className="hover:text-blue-600">Điều khoản sử dụng</a></li>
-              <li><a href="#" className="hover:text-blue-600">Giới thiệu Tiki Xu</a></li>
-              <li><a href="#" className="hover:text-blue-600">Tiếp thị liên kết cùng Tiki</a></li>
-              <li><a href="#" className="hover:text-blue-600">Bán hàng doanh nghiệp</a></li>
-              <li><a href="#" className="hover:text-blue-600">Điều kiện vận chuyển</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Giới thiệu Tiki</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Tiki Blog</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Tuyển dụng</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Chính sách bảo mật thanh toán</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Chính sách bảo mật thông tin cá nhân</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Chính sách giải quyết khiếu nại</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Điều khoản sử dụng</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Giới thiệu Tiki Xu</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Tiếp thị liên kết cùng Tiki</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Bán hàng doanh nghiệp</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Điều kiện vận chuyển</a></li>
             </ul>
           </div>
 
@@ -62,8 +55,8 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-sm font-semibold mb-4 text-gray-900">Hợp tác và liên kết</h3>
             <ul className="space-y-2 text-sm">
-              <li><a href="http://online.gov.vn/Home/WebDetails/21193" className="hover:text-blue-600" target="_blank" rel="noopener noreferrer">Quy chế hoạt động Sàn GDTMĐT</a></li>
-              <li><a href="#" className="hover:text-blue-600">Bán hàng cùng Tiki</a></li>
+              <li><a href="http://online.gov.vn/Home/WebDetails/21193" className="hover:text-blue-600 transition-colors" target="_blank" rel="noopener noreferrer">Quy chế hoạt động Sàn GDTMĐT</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Bán hàng cùng Tiki</a></li>
             </ul>
 
             <div className="mt-6">
@@ -75,51 +68,18 @@ const Footer: React.FC = () => {
                 <a href="http://online.gov.vn/Home/WebDetails/21193" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
                   <img src="https://frontend.tikicdn.com/_desktop-next/static/img/footer/bo-cong-thuong-2.png" alt="Đăng ký Bộ Công Thương" className="h-8 w-auto" />
                 </a>
-                <a href="https://www.dmca.com/Protection/Status.aspx?ID=388d758c-6722-4245-a2b0-1d2415e70127&refurl=https://tiki.vn/" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
-                  <img src="https://images.dmca.com/Badges/dmca_protected_sml_120y.png?ID=388d758c-6722-4245-a2b0-1d2415e70127" alt="DMCA Protection Status" className="h-8 w-auto" />
-                </a>
               </div>
             </div>
           </div>
 
-          {/* Phương thức thanh toán và Dịch vụ giao hàng */}
+          {/* Phương thức thanh toán */}
           <div>
             <h3 className="text-sm font-semibold mb-4 text-gray-900">Phương thức thanh toán</h3>
             <div className="mb-6">
               <img
                 src={payMethodImage}
                 alt="Phương thức thanh toán"
-                className="w-full max-w-[280px] h-auto rounded border"
-                onError={(e) => {
-                  // Fallback to text-based payment methods if image not found
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
-                  const parent = target.parentElement;
-                  if (parent) {
-                    parent.innerHTML = `
-                      <div class="grid grid-cols-3 gap-2">
-                        <div class="bg-white border rounded p-2 flex items-center justify-center h-8">
-                          <span class="text-blue-600 font-bold text-xs">VISA</span>
-                        </div>
-                        <div class="bg-white border rounded p-2 flex items-center justify-center h-8">
-                          <span class="text-blue-600 font-bold text-xs">MasterCard</span>
-                        </div>
-                        <div class="bg-white border rounded p-2 flex items-center justify-center h-8">
-                          <span class="text-blue-600 font-bold text-xs">JCB</span>
-                        </div>
-                        <div class="bg-white border rounded p-2 flex items-center justify-center h-8">
-                          <span class="text-pink-600 font-bold text-xs">MoMo</span>
-                        </div>
-                        <div class="bg-white border rounded p-2 flex items-center justify-center h-8">
-                          <span class="text-blue-500 font-bold text-xs">ZaloPay</span>
-                        </div>
-                        <div class="bg-white border rounded p-2 flex items-center justify-center h-8">
-                          <span class="text-gray-600 font-bold text-xs">ATM</span>
-                        </div>
-                      </div>
-                    `;
-                  }
-                }}
+                className="w-full max-w-[280px] h-auto rounded border bg-white p-2"
               />
             </div>
 
@@ -131,76 +91,69 @@ const Footer: React.FC = () => {
             </div>
           </div>
 
-          {/* Kết nối với chúng tôi */}
+          {/* Kết nối với chúng tôi và Tải ứng dụng */}
           <div>
-            <h3 className="text-sm font-semibold mb-4 text-gray-900">Kết nối với chúng tôi</h3>
-            <div className="flex gap-3 mb-6">
-              <a
-                href="https://www.facebook.com/tiki.vn"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full overflow-hidden hover:opacity-80 transition-opacity"
-              >
-                <img
-                  src={facebookImage}
-                  alt="Facebook Tiki"
-                  className="w-full h-full object-cover"
-                />
-              </a>
-              <a
-                href="https://www.youtube.com/channel/UCxTp8K7VP3jQXpqmRyKjxyA"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center hover:bg-red-700 transition-colors"
-              >
-                <Play size={16} className="text-white ml-0.5" />
-              </a>
-              <a
-                href="https://zalo.me/tiki"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full overflow-hidden hover:opacity-80 transition-opacity"
-              >
-                <img
-                  src={zaloImage}
-                  alt="Zalo Tiki"
-                  className="w-full h-full object-cover"
-                />
-              </a>
+            <div className="mb-6">
+              <h3 className="text-sm font-semibold mb-4 text-gray-900">Kết nối với chúng tôi</h3>
+              <div className="flex gap-3">
+                <a
+                  href="https://www.facebook.com/tiki.vn"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full overflow-hidden hover:opacity-80 transition-opacity"
+                >
+                  <img
+                    src={facebookImage}
+                    alt="Facebook Tiki"
+                    className="w-full h-full object-cover"
+                  />
+                </a>
+                <a
+                  href="https://www.youtube.com/channel/UCxTp8K7VP3jQXpqmRyKjxyA"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center hover:bg-red-700 transition-colors"
+                >
+                  <Play size={16} className="text-white ml-0.5" />
+                </a>
+                <a
+                  href="https://zalo.me/tiki"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full overflow-hidden hover:opacity-80 transition-opacity"
+                >
+                  <img
+                    src={zaloImage}
+                    alt="Zalo Tiki"
+                    className="w-full h-full object-cover"
+                  />
+                </a>
+              </div>
             </div>
 
             <div>
               <h4 className="text-sm font-semibold mb-3 text-gray-900">Tải ứng dụng trên điện thoại</h4>
               <div className="flex gap-3">
-                <div className="flex-1">
-                  <img 
-                    src="https://frontend.tikicdn.com/_desktop-next/static/img/footer/qrcode.png" 
-                    alt="QR Code Tiki App" 
+                <div className="flex-shrink-0">
+                  <img
+                    src="https://frontend.tikicdn.com/_desktop-next/static/img/footer/qrcode.png"
+                    alt="QR Code Tiki App"
                     className="w-20 h-20 border border-gray-300 rounded"
-                    onError={(e) => {
-                      // Fallback to placeholder if image not found
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                      const parent = target.parentElement;
-                      if (parent) {
-                        parent.innerHTML = '<div class="w-20 h-20 border border-gray-300 rounded flex items-center justify-center bg-gray-100"><span class="text-gray-400 text-xs">QR Code</span></div>';
-                      }
-                    }}
                   />
                 </div>
-                <div className="flex-1 space-y-2">
-                  <a href="https://apps.apple.com/app/tiki/id958100553" className="block">
-                    <img 
-                      src="https://frontend.tikicdn.com/_desktop-next/static/img/icons/appstore.png" 
+                <div className="flex flex-col gap-2">
+                  <a href="https://apps.apple.com/app/tiki/id958100553" target="_blank" rel="noopener noreferrer" className="block">
+                    <img
+                      src="https://frontend.tikicdn.com/_desktop-next/static/img/icons/appstore.png"
                       alt="Download on App Store"
-                      className="w-full h-auto"
+                      className="h-9 w-auto"
                     />
                   </a>
-                  <a href="https://play.google.com/store/apps/details?id=vn.tiki.app.tikiandroid" className="block">
-                    <img 
-                      src="https://frontend.tikicdn.com/_desktop-next/static/img/icons/playstore.png" 
+                  <a href="https://play.google.com/store/apps/details?id=vn.tiki.app.tikiandroid" target="_blank" rel="noopener noreferrer" className="block">
+                    <img
+                      src="https://frontend.tikicdn.com/_desktop-next/static/img/icons/playstore.png"
                       alt="Get it on Google Play"
-                      className="w-full h-auto"
+                      className="h-9 w-auto"
                     />
                   </a>
                 </div>
