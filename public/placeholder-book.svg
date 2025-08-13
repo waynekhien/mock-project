@@ -1,0 +1,6 @@
+<!-- Placeholder for book images -->
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="64" height="64" fill="#f3f4f6"/>
+  <rect x="16" y="12" width="32" height="40" fill="#e5e7eb" stroke="#d1d5db" stroke-width="1"/>
+  <text x="32" y="36" text-anchor="middle" fill="#6b7280" font-family="Arial" font-size="8">Book</text>
+</svg>

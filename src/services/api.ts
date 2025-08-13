@@ -162,4 +162,33 @@ export const booksApi = {
       );
     }
   },
+
+  // Get books by author
+  getByAuthor: async (authorId: number): Promise<Book[]> => {
+    try {
+      const response = await api.get<Book[]>(`/books?author=${authorId}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        axios.isAxiosError(error)
+          ? error.response?.data?.message || error.message
+          : 'Failed to fetch books by author'
+      );
+    }
+  },
+
+  // Get related books (optimized endpoint for related products)
+  getRelated: async (bookId: string, type: 'category' | 'author', limit = 6): Promise<Book[]> => {
+    try {
+      const response = await api.get<Book[]>(`/books/${bookId}/related?type=${type}&limit=${limit}`);
+      return response.data;
+    } catch (error) {
+      // Fallback to existing methods if the optimized endpoint doesn't exist
+      throw new Error(
+        axios.isAxiosError(error)
+          ? error.response?.data?.message || error.message
+          : 'Failed to fetch related books'
+      );
+    }
+  },
 };

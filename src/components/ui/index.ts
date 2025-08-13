@@ -15,3 +15,4 @@ export {
   CardContent, 
   CardFooter 
 } from './Card';
+export { default as Cart } from './Cart';

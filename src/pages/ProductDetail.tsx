@@ -14,11 +14,13 @@ import {
   RelatedProducts
 } from '../components';
 import { booksApi } from '../services/api';
+import { useCart } from '../contexts/CartContext';
 import type { Book } from '../types';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { addToCart } = useCart();
   const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -63,19 +65,45 @@ const ProductDetail: React.FC = () => {
   const handleAddToCart = (quantity: number) => {
     if (!book) return;
     
-    // Simulate adding to cart
-    console.log('Adding to cart:', { book, quantity });
+    // Lấy ảnh tốt nhất có sẵn
+    const getImageUrl = () => {
+      if (book.book_cover) return book.book_cover;
+      if (book.images && book.images.length > 0) {
+        return book.images[0].thumbnail_url || book.images[0].small_url || book.images[0].medium_url;
+      }
+      return ''; // fallback sẽ được xử lý trong Cart component
+    };
     
-    // Show success notification (you can replace with proper toast)
-    alert(`Đã thêm ${quantity} cuốn "${book.name}" vào giỏ hàng!`);
-  };
-
-  const handleAddRelatedToCart = (relatedBook: Book) => {
-    // Simulate adding related product to cart with quantity 1
-    console.log('Adding related product to cart:', relatedBook);
+    // Add to cart using context - chỉ gọi addToCart một lần với quantity
+    const finalPrice = book.current_seller?.price || book.list_price; // Giá của seller hiện tại hoặc list_price
+    const cartItem = {
+      id: parseInt(book.id),
+      name: book.name,
+      price: finalPrice, // Giá cuối cùng (từ current_seller)
+      image: getImageUrl(),
+      originalPrice: book.original_price // Giá gốc niêm yết
+    };
+    
+    console.log('Adding to cart:', {
+      book_list_price: book.list_price,
+      book_original_price: book.original_price,
+      current_seller_price: book.current_seller?.price,
+      final_price: finalPrice,
+      cart_item: cartItem
+    });
+    
+    addToCart(cartItem);
+    
+    // Nếu quantity > 1, cập nhật quantity trong cart
+    if (quantity > 1) {
+      // Context sẽ tự động merge và tăng quantity
+      for (let i = 1; i < quantity; i++) {
+        addToCart(cartItem);
+      }
+    }
     
     // Show success notification
-    alert(`Đã thêm "${relatedBook.name}" vào giỏ hàng!`);
+    alert(`Đã thêm ${quantity} cuốn "${book.name}" vào giỏ hàng!`);
   };
 
   const handleBuyNow = (quantity: number) => {
@@ -198,7 +226,6 @@ const ProductDetail: React.FC = () => {
         <RelatedProducts 
           currentBook={book}
           onProductClick={(productId) => navigate(`/product/${productId}`)}
-          onAddToCart={handleAddRelatedToCart}
         />
       </main>
 
