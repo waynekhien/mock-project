@@ -6,3 +6,6 @@ export * from './layout';
 
 // Feature Components
 export * from './features';
+
+// Admin Components
+export * from './admin';

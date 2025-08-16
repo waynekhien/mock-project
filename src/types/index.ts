@@ -78,3 +78,57 @@ export interface ApiResponse<T> {
   message?: string;
   success: boolean;
 }
+
+// User interface
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  address?: string;
+  role: 'admin' | 'customer';
+  createdAt: string;
+  updatedAt?: string;
+}
+
+// Product interface (generic product, can be used for books or other items)
+export interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  originalPrice?: number;
+  category: string;
+  brand?: string;
+  stock: number;
+  images: string[];
+  rating?: number;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+// Order interface
+export interface OrderItem {
+  id: string;
+  productId: string;
+  productName: string;
+  quantity: number;
+  price: number;
+  total: number;
+}
+
+export interface Order {
+  id: string;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  items: OrderItem[];
+  totalAmount: number;
+  status: 'pending' | 'confirmed' | 'shipping' | 'delivered' | 'cancelled';
+  paymentMethod: 'cash' | 'card' | 'bank_transfer';
+  paymentStatus: 'pending' | 'paid' | 'failed';
+  shippingAddress: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt?: string;
+}
