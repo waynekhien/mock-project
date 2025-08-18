@@ -62,8 +62,10 @@ const ProductDetail: React.FC = () => {
     return 0;
   };
 
-  const handleAddToCart = (quantity: number) => {
+  const handleAddToCart = async (quantity: number) => {
     if (!book) return;
+    
+    console.log('🛒 Adding to cart - Book:', book.name, 'Quantity:', quantity);
     
     // Lấy ảnh tốt nhất có sẵn
     const getImageUrl = () => {
@@ -74,36 +76,36 @@ const ProductDetail: React.FC = () => {
       return ''; // fallback sẽ được xử lý trong Cart component
     };
     
-    // Add to cart using context - chỉ gọi addToCart một lần với quantity
-    const finalPrice = book.current_seller?.price || book.list_price; // Giá của seller hiện tại hoặc list_price
+    // Add to cart using context với thông tin chi tiết
+    const finalPrice = book.current_seller?.price || book.list_price;
     const cartItem = {
-      id: parseInt(book.id),
+      productId: book.id.toString(), // Đảm bảo là string
       name: book.name,
-      price: finalPrice, // Giá cuối cùng (từ current_seller)
+      price: finalPrice,
+      originalPrice: book.list_price,
       image: getImageUrl(),
-      originalPrice: book.original_price // Giá gốc niêm yết
+      description: book.short_description || book.description,
+      category: book.categories?.name || 'Sách',
+      brand: book.authors?.[0]?.name || book.current_seller?.name || 'Không rõ'
     };
+
+    // Thông tin khách hàng sẽ được lấy từ userId trong CartContext
     
-    console.log('Adding to cart:', {
-      book_list_price: book.list_price,
-      book_original_price: book.original_price,
-      current_seller_price: book.current_seller?.price,
-      final_price: finalPrice,
-      cart_item: cartItem
-    });
+    console.log('🛒 CartItem data:', cartItem);
     
-    addToCart(cartItem);
-    
-    // Nếu quantity > 1, cập nhật quantity trong cart
-    if (quantity > 1) {
-      // Context sẽ tự động merge và tăng quantity
-      for (let i = 1; i < quantity; i++) {
-        addToCart(cartItem);
-      }
+    try {
+      // Add product to cart with specified quantity
+      console.log('🛒 Adding', quantity, 'items to cart...');
+      
+      // Gọi addToCart chỉ 1 lần với quantity đúng
+      await addToCart(cartItem, quantity);
+      
+      console.log('✅ Successfully added', quantity, 'items to cart');
+      alert(`Đã thêm ${quantity} cuốn "${book.name}" vào giỏ hàng!`);
+    } catch (error) {
+      console.error('❌ Error adding to cart:', error);
+      alert('Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng!');
     }
-    
-    // Show success notification
-    alert(`Đã thêm ${quantity} cuốn "${book.name}" vào giỏ hàng!`);
   };
 
   const handleBuyNow = (quantity: number) => {

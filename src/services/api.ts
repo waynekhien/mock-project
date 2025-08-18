@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Category, Book, User, Product, Order } from '../types';
+import type { Category, Book, User, Product, Order, LoginRequest, LoginResponse, CartItem, CartRequest, CartResponse } from '../types';
 
 // Create axios instance with base configuration
 const api = axios.create({
@@ -10,10 +10,23 @@ const api = axios.create({
   timeout: 10000, // 10 seconds timeout
 });
 
-// Request interceptor for logging
+// Request interceptor for logging and auth
 api.interceptors.request.use(
   (config) => {
     console.log(`Making ${config.method?.toUpperCase()} request to ${config.url}`);
+    
+    // Add auth token if available
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    
+    console.log('Request config:', {
+      url: config.url,
+      method: config.method,
+      headers: config.headers,
+      data: config.data
+    });
     return config;
   },
   (error) => {
@@ -25,10 +38,16 @@ api.interceptors.request.use(
 // Response interceptor for error handling
 api.interceptors.response.use(
   (response) => {
+    console.log('Response received:', response.status, response.data);
     return response;
   },
   (error) => {
-    console.error('Response error:', error.response?.data || error.message);
+    console.error('Response error:', {
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data,
+      message: error.message
+    });
     return Promise.reject(error);
   }
 );
@@ -475,6 +494,139 @@ export const ordersApi = {
           ? error.response?.data?.message || error.message
           : 'Failed to delete order'
       );
+    }
+  },
+};
+
+// Authentication API functions
+export const authApi = {
+  // Login user
+  login: async (credentials: LoginRequest): Promise<LoginResponse> => {
+    try {
+      const response = await api.post<LoginResponse>('/login', credentials);
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        axios.isAxiosError(error)
+          ? error.response?.data?.message || error.message
+          : 'Login failed'
+      );
+    }
+  },
+
+  // Logout user (optional - clears localStorage)
+  logout: async (): Promise<void> => {
+    try {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('user');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  },
+
+  // Get current user from localStorage
+  getCurrentUser: (): LoginResponse['user'] | null => {
+    try {
+      const user = localStorage.getItem('user');
+      return user ? JSON.parse(user) : null;
+    } catch (error) {
+      console.error('Error getting current user:', error);
+      return null;
+    }
+  },
+
+  // Get access token from localStorage
+  getAccessToken: (): string | null => {
+    try {
+      return localStorage.getItem('accessToken');
+    } catch (error) {
+      console.error('Error getting access token:', error);
+      return null;
+    }
+  },
+};
+
+// Cart API functions
+export const cartsApi = {
+  // Get all cart items for a user
+  getAll: async (userId?: string): Promise<CartResponse[]> => {
+    try {
+      const params = userId ? { userId } : {};
+      const response = await api.get<CartResponse[]>('/carts', { params });
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        axios.isAxiosError(error)
+          ? error.response?.data?.message || error.message
+          : 'Failed to fetch cart items'
+      );
+    }
+  },
+
+  // Add item to cart
+  add: async (cartItem: CartRequest): Promise<CartResponse> => {
+    try {
+      const response = await api.post<CartResponse>('/carts', cartItem);
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        axios.isAxiosError(error)
+          ? error.response?.data?.message || error.message
+          : 'Failed to add item to cart'
+      );
+    }
+  },
+
+  // Update cart item quantity
+  update: async (id: string, updates: Partial<CartRequest>): Promise<CartResponse> => {
+    try {
+      const response = await api.put<CartResponse>(`/carts/${id}`, updates);
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        axios.isAxiosError(error)
+          ? error.response?.data?.message || error.message
+          : 'Failed to update cart item'
+      );
+    }
+  },
+
+  // Remove item from cart
+  remove: async (id: string): Promise<void> => {
+    try {
+      await api.delete(`/carts/${id}`);
+    } catch (error) {
+      throw new Error(
+        axios.isAxiosError(error)
+          ? error.response?.data?.message || error.message
+          : 'Failed to remove cart item'
+      );
+    }
+  },
+
+  // Clear all cart items for a user
+  clear: async (userId?: string): Promise<void> => {
+    try {
+      const params = userId ? { userId } : {};
+      await api.delete('/carts', { params });
+    } catch (error) {
+      throw new Error(
+        axios.isAxiosError(error)
+          ? error.response?.data?.message || error.message
+          : 'Failed to clear cart'
+      );
+    }
+  },
+
+  // Get cart item by product ID
+  getByProductId: async (productId: string, userId?: string): Promise<CartResponse | null> => {
+    try {
+      const params = { productId, ...(userId && { userId }) };
+      const response = await api.get<CartResponse[]>('/carts', { params });
+      return response.data.length > 0 ? response.data[0] : null;
+    } catch (error) {
+      console.error('Error getting cart item by product ID:', error);
+      return null;
     }
   },
 };

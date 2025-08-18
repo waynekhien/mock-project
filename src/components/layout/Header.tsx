@@ -5,9 +5,10 @@ import {
   User,
   ShoppingCart,
   Search,
+  LogOut,
 } from "lucide-react";
-import Cart from "../ui/Cart";
 import { useCart } from "../../contexts/CartContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 const categories = [
   "điện gia dụng",
@@ -24,8 +25,8 @@ const categories = [
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
+  const { user, isAuthenticated, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
-  const [isCartOpen, setIsCartOpen] = useState(false);
   const { totalItems } = useCart();
 
   const handleSearch = (e: React.FormEvent) => {
@@ -41,12 +42,17 @@ const Header: React.FC = () => {
   };
 
   const handleAccountClick = () => {
-    // For now, just show alert - can be replaced with actual auth logic
-    alert("Chức năng đăng nhập/tài khoản đang được phát triển");
+    if (isAuthenticated) {
+      // Show user menu or profile
+      logout();
+    } else {
+      // Navigate to login page
+      navigate("/login");
+    }
   };
 
   const handleCartClick = () => {
-    setIsCartOpen(true);
+    navigate("/cart");
   };
 
   const handleCategoryClick = (category: string) => {
@@ -123,10 +129,12 @@ const Header: React.FC = () => {
               <button
                 onClick={handleAccountClick}
                 className="inline-flex items-center gap-1.5 text-slate-600 hover:text-sky-600 transition"
-                aria-label="Tài khoản"
+                aria-label={isAuthenticated ? "Đăng xuất" : "Đăng nhập"}
               >
-                <User className="h-5 w-5" />
-                <span className="hidden xl:inline text-sm">Tài khoản</span>
+                {isAuthenticated ? <LogOut className="h-5 w-5" /> : <User className="h-5 w-5" />}
+                <span className="hidden xl:inline text-sm">
+                  {isAuthenticated ? user?.email : "Đăng nhập"}
+                </span>
               </button>
               <button
                 onClick={handleCartClick}
@@ -155,12 +163,6 @@ const Header: React.FC = () => {
           </div>
         </div>
       </header>
-      
-      {/* Cart Popup */}
-      <Cart 
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-      />
     </>
   );
 };
