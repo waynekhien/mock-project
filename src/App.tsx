@@ -1,6 +1,6 @@
 
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Home, ProductDetail, Login, CartPage, Dashboard, ProductManagement, UserManagement, OrderManagement } from './pages';
+import { Home, ProductDetail, Login, CartPage, Checkout, OrderSuccess, Dashboard, ProductManagement, UserManagement, OrderManagement } from './pages';
 import { AdminLayout } from './components/layout';
 import { CartProvider } from './contexts/CartContext';
 import { AuthProvider } from './contexts/AuthContext';
@@ -15,6 +15,8 @@ function App() {
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/login" element={<Login />} />
             <Route path="/cart" element={<CartPage />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/order-success" element={<OrderSuccess />} />
             
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminLayout />}>

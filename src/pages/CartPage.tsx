@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
-import type { CartItem } from '../contexts/CartContext';
+// import type { CartItem } from '../contexts/CartContext';
 import { Minus, Plus, Trash2, ArrowLeft, ShoppingBag } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
@@ -25,8 +25,7 @@ const CartPage: React.FC = () => {
   };
 
   const handleCheckout = () => {
-    // Navigate to checkout page (you can implement this later)
-    alert('Chức năng thanh toán đang được phát triển');
+    navigate('/checkout');
   };
 
   const formatPrice = (price: number) => {
