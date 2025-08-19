@@ -5,6 +5,7 @@ export interface Category {
   name: string;
   description?: string;
   slug?: string;
+  image?: string;
   createdAt?: string;
   updatedAt?: string;
   is_leaf?: boolean;
@@ -89,6 +90,13 @@ export interface User {
   role: 'admin' | 'customer';
   createdAt: string;
   updatedAt?: string;
+  // Extended profile fields
+  firstName?: string;
+  lastName?: string;
+  nickname?: string;
+  gender?: 'male' | 'female' | 'other';
+  country?: string;
+  birthDate?: string;
 }
 
 // Product interface (generic product, can be used for books or other items)
@@ -120,6 +128,13 @@ export interface LoginResponse {
     confirmPassword: string;
     role: string;
     id: number;
+    phone?: string;
+    firstName?: string;
+    lastName?: string;
+    nickname?: string;
+    birthDate?: string;
+    gender?: string;
+    country?: string;
   };
 }
 

@@ -133,14 +133,13 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
             </div>
             
             <div className={`grid gap-2 ${
-              images.length === 1 ? 'grid-cols-1' :
-              images.length === 2 ? 'grid-cols-2' : 
-              images.length === 3 ? 'grid-cols-3' :
-              images.length <= 6 ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4' :
-              images.length <= 10 ? 'grid-cols-3 sm:grid-cols-4 md:grid-cols-5' :
-              images.length <= 15 ? 'grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6' :
-              'grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8'
-            } max-h-none`}>
+              images.length === 1 ? 'grid-cols-1 max-w-[80px] mx-auto' :
+              images.length === 2 ? 'grid-cols-2 max-w-[170px] mx-auto' : 
+              images.length === 3 ? 'grid-cols-3 max-w-[250px] mx-auto' :
+              images.length <= 6 ? 'grid-cols-3' :
+              images.length <= 10 ? 'grid-cols-4' :
+              'grid-cols-4'
+            }`}>
               {images.map((image, index) => (
                 <button
                   key={index}
@@ -149,6 +148,8 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
                     setSelectedImageIndex(index);
                   }}
                   className={`aspect-square rounded-lg overflow-hidden border-2 transition-all hover:shadow-md relative group ${
+                    images.length <= 3 ? 'w-16 h-16' : 'w-full h-full'
+                  } ${
                     selectedImageIndex === index 
                       ? 'border-blue-500 shadow-md ring-2 ring-blue-200' 
                       : 'border-gray-200 hover:border-gray-300'

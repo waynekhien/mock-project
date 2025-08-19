@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Home as HomeIcon,
   User,
   ShoppingCart,
   Search,
-  LogOut,
+  ChevronDown,
 } from "lucide-react";
 import { useCart } from "../../contexts/CartContext";
 import { useAuth } from "../../contexts/AuthContext";
+import { LoginModal } from "../ui/LoginModal";
 
 const categories = [
   "điện gia dụng",
@@ -25,9 +26,26 @@ const categories = [
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
+  const [showAccountDropdown, setShowAccountDropdown] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const { totalItems } = useCart();
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowAccountDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,12 +61,27 @@ const Header: React.FC = () => {
 
   const handleAccountClick = () => {
     if (isAuthenticated) {
-      // Show user menu or profile
-      logout();
+      setShowAccountDropdown(!showAccountDropdown);
     } else {
-      // Navigate to login page
-      navigate("/login");
+      // Show login modal instead of navigating to login page
+      setShowLoginModal(true);
     }
+  };
+
+  const handleLogout = () => {
+    logout();
+    setShowAccountDropdown(false);
+    navigate("/");
+  };
+
+  const handleAccountInfo = () => {
+    setShowAccountDropdown(false);
+    navigate("/account");
+  };
+
+  const handleMyOrders = () => {
+    setShowAccountDropdown(false);
+    navigate("/orders");
   };
 
   const handleCartClick = () => {
@@ -61,9 +94,13 @@ const Header: React.FC = () => {
   return (
     <>
       {/* Top notice */}
-      <div className="w-full bg-emerald-50 text-emerald-700 text-xs sm:text-sm py-2 text-center">
-        Freeship đơn từ 45k, giảm nhiều hơn cùng{" "}
-        <span className="font-semibold">FREESHIP XTRA</span>
+      <div className="w-full bg-emerald-50 text-emerald-700 text-xs sm:text-sm py-2 text-center flex items-center justify-center">
+        <span className="mr-2">Freeship đơn từ 45k, giảm nhiều hơn cùng</span>
+        <img 
+          src="https://salt.tikicdn.com/ts/upload/a7/18/8c/910f3a83b017b7ced73e80c7ed4154b0.png" 
+          alt="Freeship Xtra" 
+          className="h-4 inline-block"
+        />
       </div>
 
       {/* Header */}
@@ -126,16 +163,55 @@ const Header: React.FC = () => {
                 <HomeIcon className="h-5 w-5" />
                 <span className="hidden xl:inline text-sm">Trang chủ</span>
               </button>
-              <button
-                onClick={handleAccountClick}
-                className="inline-flex items-center gap-1.5 text-slate-600 hover:text-sky-600 transition"
-                aria-label={isAuthenticated ? "Đăng xuất" : "Đăng nhập"}
-              >
-                {isAuthenticated ? <LogOut className="h-5 w-5" /> : <User className="h-5 w-5" />}
-                <span className="hidden xl:inline text-sm">
-                  {isAuthenticated ? user?.email : "Đăng nhập"}
-                </span>
-              </button>
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={handleAccountClick}
+                  className="inline-flex items-center gap-1.5 text-slate-600 hover:text-sky-600 transition"
+                  aria-label={isAuthenticated ? "Tài khoản" : "Đăng nhập"}
+                >
+                  {isAuthenticated ? (
+                    <>
+                      <img 
+                        src="https://salt.tikicdn.com/ts/upload/07/d5/94/d7b6a3bd7d57d37ef6e437aa0de4821b.png" 
+                        alt="account" 
+                        className="h-5 w-5"
+                      />
+                      <span className="hidden xl:inline text-sm">Tài khoản</span>
+                      <ChevronDown className="h-4 w-4" />
+                    </>
+                  ) : (
+                    <>
+                      <User className="h-5 w-5" />
+                      <span className="hidden xl:inline text-sm">Đăng nhập</span>
+                    </>
+                  )}
+                </button>
+
+                {/* Dropdown Menu */}
+                {isAuthenticated && showAccountDropdown && (
+                  <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                    <button
+                      onClick={handleAccountInfo}
+                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                    >
+                      Thông tin tài khoản
+                    </button>
+                    <button
+                      onClick={handleMyOrders}
+                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                    >
+                      Đơn hàng của tôi
+                    </button>
+                    <hr className="my-1 border-gray-200" />
+                    <button
+                      onClick={handleLogout}
+                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                    >
+                      Đăng xuất
+                    </button>
+                  </div>
+                )}
+              </div>
               <button
                 onClick={handleCartClick}
                 className="relative inline-flex items-center text-slate-600 hover:text-sky-600 transition"
@@ -163,6 +239,12 @@ const Header: React.FC = () => {
           </div>
         </div>
       </header>
+
+      {/* Login Modal */}
+      <LoginModal 
+        isOpen={showLoginModal} 
+        onClose={() => setShowLoginModal(false)} 
+      />
     </>
   );
 };

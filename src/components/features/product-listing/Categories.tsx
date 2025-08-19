@@ -69,11 +69,9 @@ const Categories: React.FC<CategoriesProps> = ({
 
   if (loading) {
     return (
-      <div className={`w-64 bg-white border-r border-gray-200 ${className}`}>
-        <div className="p-4">
-          <div className="flex items-center justify-center py-8">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-600"></div>
-          </div>
+      <div className={className}>
+        <div className="flex items-center justify-center py-8">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-600"></div>
         </div>
       </div>
     );
@@ -81,35 +79,33 @@ const Categories: React.FC<CategoriesProps> = ({
 
   if (error) {
     return (
-      <div className={`w-64 bg-white border-r border-gray-200 ${className}`}>
-        <div className="p-4">
-          <div className="text-center py-4">
-            <p className="text-red-600 text-sm mb-2">Error loading</p>
-            <button
-              onClick={handleRetry}
-              className="text-xs bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded"
-            >
-              Retry
-            </button>
-          </div>
+      <div className={className}>
+        <div className="text-center py-4">
+          <p className="text-red-600 text-sm mb-2">Error loading</p>
+          <button
+            onClick={handleRetry}
+            className="text-xs bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded"
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={`w-64 bg-white border-r border-gray-200 h-screen overflow-y-auto ${className}`}>
+    <div className={className}>
       {/* Header */}
-      <div className="p-4 border-b border-gray-200">
+      <div className="pb-4 border-b border-gray-200">
         <h2 className="text-sm font-medium text-gray-900">Khám phá theo danh mục</h2>
       </div>
 
       {/* Categories List */}
-      <div className="py-2">
+      <div className="pt-2">
         {categories.map((category) => (
           <div key={category.id} className="border-b border-gray-100 last:border-b-0">
             <button
-              className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 focus:outline-none focus:bg-gray-50 transition-colors duration-150"
+              className="w-full flex items-center justify-between py-3 text-left hover:bg-gray-50 focus:outline-none focus:bg-gray-50 transition-colors duration-150"
               onClick={() => toggleCategory(category.id)}
             >
               <span className="text-sm text-gray-700 font-medium">
@@ -131,7 +127,7 @@ const Categories: React.FC<CategoriesProps> = ({
             {expandedCategories.has(category.id) && (
               <div className="bg-gray-50 border-t border-gray-100">
                 {category.description ? (
-                  <div className="px-6 py-3">
+                  <div className="px-3 py-3">
                     <p className="text-xs text-gray-600 leading-relaxed">
                       {category.description}
                     </p>
@@ -148,7 +144,7 @@ const Categories: React.FC<CategoriesProps> = ({
                     </button>
                   </div>
                 ) : (
-                  <div className="px-6 py-3">
+                  <div className="px-3 py-3">
                     <button
                       onClick={() => handleCategoryClick(category)}
                       className="text-xs text-blue-600 hover:text-blue-800 font-medium"

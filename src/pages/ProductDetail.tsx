@@ -5,25 +5,30 @@ import {
   Footer, 
   Button,
   ProductImageGallery,
-  ProductInfo,
+  ProductBasicInfo,
+  ProductDetails,
+  ProductDescription,
   SellerInfo,
   PurchaseSection,
-  SocialActions,
-  ProductDetailTabs,
+  PurchasePolicy,
   Breadcrumb,
   RelatedProducts
 } from '../components';
+import { LoginModal } from '../components/ui/LoginModal';
 import { booksApi } from '../services/api';
 import { useCart } from '../contexts/CartContext';
+import { useAuth } from '../contexts/AuthContext';
 import type { Book } from '../types';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const { isAuthenticated } = useAuth();
   const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -64,6 +69,13 @@ const ProductDetail: React.FC = () => {
 
   const handleAddToCart = async (quantity: number) => {
     if (!book) return;
+    
+    // Kiểm tra authentication trước
+    if (!isAuthenticated) {
+      alert('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!');
+      setShowLoginModal(true);
+      return;
+    }
     
     console.log('🛒 Adding to cart - Book:', book.name, 'Quantity:', quantity);
     
@@ -118,32 +130,32 @@ const ProductDetail: React.FC = () => {
     alert(`Mua ngay ${quantity} cuốn "${book.name}"!`);
   };
 
-  const handleShare = async () => {
-    const shareData = {
-      title: book?.name || 'Sản phẩm từ Tiki',
-      text: book?.short_description || 'Xem sản phẩm này trên Tiki',
-      url: window.location.href,
-    };
+  // const handleShare = async () => {
+  //   const shareData = {
+  //     title: book?.name || 'Sản phẩm từ Tiki',
+  //     text: book?.short_description || 'Xem sản phẩm này trên Tiki',
+  //     url: window.location.href,
+  //   };
 
-    try {
-      if (navigator.share && navigator.canShare(shareData)) {
-        await navigator.share(shareData);
-      } else {
-        // Fallback: copy to clipboard
-        await navigator.clipboard.writeText(window.location.href);
-        alert('Đã copy link sản phẩm vào clipboard!');
-      }
-    } catch (error) {
-      console.error('Error sharing:', error);
-      // Final fallback
-      try {
-        await navigator.clipboard.writeText(window.location.href);
-        alert('Đã copy link sản phẩm vào clipboard!');
-      } catch (clipboardError) {
-        console.error('Clipboard access failed:', clipboardError);
-      }
-    }
-  };
+  //   try {
+  //     if (navigator.share && navigator.canShare(shareData)) {
+  //       await navigator.share(shareData);
+  //     } else {
+  //       // Fallback: copy to clipboard
+  //       await navigator.clipboard.writeText(window.location.href);
+  //       alert('Đã copy link sản phẩm vào clipboard!');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error sharing:', error);
+  //     // Final fallback
+  //     try {
+  //       await navigator.clipboard.writeText(window.location.href);
+  //       alert('Đã copy link sản phẩm vào clipboard!');
+  //     } catch (clipboardError) {
+  //       console.error('Clipboard access failed:', clipboardError);
+  //     }
+  //   }
+  // };
 
   if (loading) {
     return (
@@ -189,49 +201,73 @@ const ProductDetail: React.FC = () => {
           onNavigateHome={() => navigate('/')}
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Product Images */}
-          <div className="lg:col-span-1">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Left Column - Product Images (3 columns - smaller) */}
+          <div className="lg:col-span-3">
             <ProductImageGallery
               images={book.images}
               productName={book.name}
               discountPercentage={discountPercentage}
             />
-            <div className="mt-4">
+            {/* <div className="mt-4">
               <SocialActions onShare={handleShare} />
-            </div>
+            </div> */}
           </div>
 
-          {/* Right Column - Product Information */}
-          <div className="lg:col-span-2 space-y-4">
-            {/* Product Title and Basic Info */}
-            <ProductInfo
+          {/* Middle Column - Product Information (6 columns - wider) */}
+          <div className="lg:col-span-6 space-y-6">
+            {/* Product Title, Author, Rating, Price */}
+            <ProductBasicInfo
               book={book}
               discountPercentage={discountPercentage}
               formatPrice={formatPrice}
             />
 
-            {/* Purchase Section */}
-            <SellerInfo seller={book.current_seller} />
-            
-            <PurchaseSection
-              onAddToCart={handleAddToCart}
-              onBuyNow={handleBuyNow}
-            />
+            {/* Product Details Table */}
+            <ProductDetails book={book} />
+
+            {/* Product Description */}
+            <ProductDescription book={book} />
+
+
+
+            {/* Related Products */}
+            <div className="mt-8">
+              <RelatedProducts 
+                currentBook={book}
+                onProductClick={(productId) => navigate(`/product/${productId}`)}
+              />
+            </div>
+
+            {/* Purchase Policy */}
+            <PurchasePolicy />
+          </div>
+
+          {/* Right Column - Purchase Section (3 columns) */}
+          <div className="lg:col-span-3">
+            <div className="sticky top-4 space-y-4">
+              {/* Seller Information */}
+              <SellerInfo seller={book.current_seller} />
+              
+              {/* Purchase Section */}
+              <PurchaseSection
+                onAddToCart={handleAddToCart}
+                onBuyNow={handleBuyNow}
+                price={book.current_seller.price}
+                formatPrice={formatPrice}
+              />
+            </div>
           </div>
         </div>
-
-        {/* Product Details Tabs */}
-        <ProductDetailTabs book={book} />
-
-        {/* Related Products */}
-        <RelatedProducts 
-          currentBook={book}
-          onProductClick={(productId) => navigate(`/product/${productId}`)}
-        />
       </main>
 
       <Footer />
+
+      {/* Login Modal */}
+      <LoginModal 
+        isOpen={showLoginModal} 
+        onClose={() => setShowLoginModal(false)} 
+      />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Truck, Clock } from 'lucide-react';
+import { Truck } from 'lucide-react';
 import { useCart } from '../../contexts/CartContext';
 import { useDelivery } from '../../contexts/DeliveryContext';
 
@@ -20,12 +20,12 @@ const DeliveryMethod: React.FC = () => {
   const deliveryOptions: DeliveryOption[] = [
     {
       id: 'now',
-      name: 'NOW Giao siêu tốc 2h',
+      name: 'Giao siêu tốc 2h',
       description: 'Giao siêu tốc 2h, trước 13h hôm nay',
       price: 25000,
       discount: 25000,
       estimatedTime: '2h',
-      icon: <Clock className="w-5 h-5 text-red-500" />
+      icon: <img src="https://salt.tikicdn.com/ts/tka/a8/31/b6/802e2c99dcce64c67aa2648edb15dd25.png" alt="NOW" className="w-8 h-5" />
     },
     {
       id: 'standard',

@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
-import { ShoppingCart, Minus, Plus, Truck, Clock, RotateCcw, CreditCard } from 'lucide-react';
+import { ShoppingCart, Minus, Plus, CreditCard } from 'lucide-react';
 import Button from '../../ui/Button';
 
 interface PurchaseSectionProps {
   onAddToCart: (quantity: number) => void;
   onBuyNow: (quantity: number) => void;
+  price: number;
+  formatPrice: (price: number) => string;
 }
 
 const PurchaseSection: React.FC<PurchaseSectionProps> = ({
   onAddToCart,
-  onBuyNow
+  onBuyNow,
+  price,
+  formatPrice
 }) => {
   const [quantity, setQuantity] = useState(1);
 
@@ -24,6 +28,8 @@ const PurchaseSection: React.FC<PurchaseSectionProps> = ({
   const handleBuyNow = () => {
     onBuyNow(quantity);
   };
+
+  const totalPrice = price * quantity;
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
@@ -48,10 +54,25 @@ const PurchaseSection: React.FC<PurchaseSectionProps> = ({
                 <Plus className="w-4 h-4" />
               </button>
             </div>
-            <span className="text-sm text-green-600 font-medium">✓ Còn 47 sản phẩm</span>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          {/* Tạm tính */}
+          <div className="bg-gray-50 rounded-lg p-4">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600">Tạm tính:</span>
+              <span className="text-lg font-semibold text-red-600">
+                {formatPrice(totalPrice)}
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3">
+            <Button
+              onClick={handleBuyNow}
+              className="bg-red-600 hover:bg-red-700 text-white font-semibold transition-all hover:shadow-lg transform hover:scale-105"
+            >
+              Mua ngay
+            </Button>
             <Button
               onClick={handleAddToCart}
               variant="outline"
@@ -61,15 +82,17 @@ const PurchaseSection: React.FC<PurchaseSectionProps> = ({
               Thêm vào giỏ
             </Button>
             <Button
-              onClick={handleBuyNow}
-              className="bg-red-600 hover:bg-red-700 text-white font-semibold transition-all hover:shadow-lg transform hover:scale-105"
+              variant="outline"
+              className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold transition-all hover:shadow-lg"
             >
-              Mua ngay
+              <CreditCard className="w-5 h-5 mr-2" />
+              Mua trước trả sau
             </Button>
+            
           </div>
         </div>
 
-        {/* Delivery and Services Information */}
+        {/* Delivery and Services Information
         <div className="space-y-3 border-t pt-4">
           <div className="flex items-center space-x-3 text-sm">
             <Truck className="w-5 h-5 text-green-600 flex-shrink-0" />
@@ -99,7 +122,7 @@ const PurchaseSection: React.FC<PurchaseSectionProps> = ({
               <span className="text-gray-600 ml-1">qua thẻ tín dụng</span>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

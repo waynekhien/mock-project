@@ -28,9 +28,6 @@ const SellerInfo: React.FC<SellerInfoProps> = ({ seller }) => {
                   Uy tín
                 </span>
               )}
-              <span className="text-xs text-gray-500">
-                Hoạt động 2 giờ trước
-              </span>
             </div>
           </div>
         </div>

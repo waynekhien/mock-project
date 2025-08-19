@@ -5,6 +5,10 @@ import { DeliveryProvider } from '../contexts/DeliveryContext';
 const Checkout: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
+        <div className="w-full bg-emerald-50 text-emerald-700 text-xs sm:text-sm py-2 text-center">
+        Freeship đơn từ 45k, giảm nhiều hơn cùng{" "}
+        <span className="font-semibold">FREESHIP XTRA</span>
+      </div>
       {/* Header theo thiết kế Tiki */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-6xl mx-auto px-4 py-3">

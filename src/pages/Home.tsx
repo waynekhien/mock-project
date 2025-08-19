@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import type { Book, Category } from "../types";
 import { Categories, ProductList, Header, Footer } from "../components";
+import { BannerCarousel, CategoryList, ProductFilter } from "../components/features/bookstore";
 
 const commitments = [
   {
@@ -80,17 +81,41 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Main layout with sidebar */}
-      <div className="flex">
-        {/* Categories Sidebar */}
-        <Categories onCategorySelect={handleCategorySelect} />
+      {/* Main layout */}
+      <div className="max-w-7xl mx-auto py-6 space-y-8">
+        {/* Original layout with sidebar */}
+        <div className="flex gap-4">
+          {/* Categories Sidebar - sát bên trái hoàn toàn */}
+          <div className="w-64 flex-shrink-0 pl-4">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-300 p-4">
+              <Categories onCategorySelect={handleCategorySelect} />
+            </div>
+          </div>
 
-        {/* Main Content */}
-        <ProductList
-          selectedCategory={selectedCategory}
-          onBookClick={handleBookClick}
-          className="flex-1"
-        />
+          {/* Main Content */}
+          <div className="flex-1 space-y-4 pr-4">
+            {/* Banner Carousel - ô riêng biệt */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-300 p-6">
+              <BannerCarousel />
+            </div>
+
+            {/* Category List - ô riêng biệt */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-300 p-6">
+              <CategoryList />
+            </div>
+
+            {/* Product Filter - ô riêng biệt */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-300">
+              <ProductFilter />
+            </div>
+
+            {/* Product List - riêng biệt, không có border */}
+            <ProductList
+              selectedCategory={selectedCategory}
+              onBookClick={handleBookClick}
+            />
+          </div>
+        </div>
       </div>
       
       <Footer />
