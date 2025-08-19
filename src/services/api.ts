@@ -514,6 +514,26 @@ export const authApi = {
     }
   },
 
+  // Register user
+  register: async (credentials: { email: string; password: string }): Promise<LoginResponse> => {
+    try {
+      // Add default role "user" for new registrations
+      const registerData = {
+        ...credentials,
+        role: 'user'
+      };
+      
+      const response = await api.post<LoginResponse>('/register', registerData);
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        axios.isAxiosError(error)
+          ? error.response?.data?.message || error.message
+          : 'Registration failed'
+      );
+    }
+  },
+
   // Logout user (optional - clears localStorage)
   logout: async (): Promise<void> => {
     try {

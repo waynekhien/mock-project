@@ -8,6 +8,7 @@ interface AuthContextType {
   accessToken: string | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string) => Promise<void>;
   logout: () => void;
   updateUserContext: (userData: Partial<LoginResponse['user']>) => void;
   loading: boolean;
@@ -64,6 +65,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const register = async (email: string, password: string): Promise<void> => {
+    try {
+      // Call register API endpoint
+      const response = await authApi.register({ email, password });
+      
+      // Save to localStorage
+      localStorage.setItem('accessToken', response.accessToken);
+      localStorage.setItem('user', JSON.stringify(response.user));
+      
+      // Update state
+      setAccessToken(response.accessToken);
+      setUser(response.user);
+    } catch (error) {
+      console.error('Register failed:', error);
+      throw error;
+    }
+  };
+
   const logout = () => {
     try {
       // Clear localStorage
@@ -91,6 +110,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     accessToken,
     isAuthenticated: !!user && !!accessToken,
     login,
+    register,
     logout,
     updateUserContext,
     loading,

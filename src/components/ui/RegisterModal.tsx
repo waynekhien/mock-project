@@ -17,7 +17,7 @@ interface RegisterFormData {
 }
 
 export const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose, onBackToLogin }) => {
-  const { login } = useAuth();
+  const { register } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState<RegisterFormData>({
@@ -60,7 +60,8 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose, o
         return;
       }
 
-      // Simulate registration API call
+      // Call register function from AuthContext
+      await register(formData.email, formData.password);
       setSuccess('Đăng ký thành công!');
       
       // Close modal after successful registration
