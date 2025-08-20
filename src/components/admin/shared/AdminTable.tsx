@@ -66,7 +66,11 @@ const AdminTable: React.FC<AdminTableProps> = ({
                         className="h-12 w-12 object-cover rounded-md"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
-                          target.src = 'https://via.placeholder.com/48x48?text=No+Image';
+                          target.style.display = 'none';
+                          const parent = target.parentElement;
+                          if (parent) {
+                            parent.innerHTML = '<div class="h-12 w-12 bg-gray-200 rounded-md flex items-center justify-center"><span class="text-xs text-gray-500">No Image</span></div>';
+                          }
                         }}
                       />
                     ) : (

@@ -4,12 +4,13 @@ import {
   Home as HomeIcon,
   User,
   ShoppingCart,
-  Search,
+  Search as SearchIcon,
   ChevronDown,
 } from "lucide-react";
 import { useCart } from "../../contexts/CartContext";
 import { useAuth } from "../../contexts/AuthContext";
 import { LoginModal } from "../ui/LoginModal";
+import { Search } from "../features";
 
 const categories = [
   "điện gia dụng",
@@ -27,7 +28,7 @@ const categories = [
 const Header: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
-  const [searchQuery, setSearchQuery] = useState("");
+  // Removed searchQuery state - using Search component instead
   const [showAccountDropdown, setShowAccountDropdown] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { totalItems } = useCart();
@@ -47,13 +48,7 @@ const Header: React.FC = () => {
     };
   }, []);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      // Navigate to search results page
-      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
-    }
-  };
+  // Removed handleSearch - using Search component instead
 
   const handleHomeClick = () => {
     navigate("/");
@@ -123,32 +118,14 @@ const Header: React.FC = () => {
               </span>
             </a>
 
-            {/* Search with inside button */}
-            <form className="flex-1" role="search" aria-label="Tìm kiếm" onSubmit={handleSearch}>
-              <label htmlFor="search" className="sr-only">
-                Tìm kiếm
-              </label>
-              <div className="relative flex w-full">
-                <Search
-                  className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400"
-                  aria-hidden
-                />
-                <input
-                  id="search"
-                  type="search"
-                  placeholder="100% hàng thật"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full rounded-xl border border-slate-300 focus:border-sky-500 focus:ring-4 focus:ring-sky-200/60 pl-10 pr-20 py-2.5 text-sm outline-none transition"
-                />
-                <button
-                  type="submit"
-                  className="absolute right-0 top-0 h-full px-4 text-sky-600 font-medium border-l border-slate-300 hover:bg-sky-100 rounded-r-xl transition-colors"
-                >
-                  Tìm kiếm
-                </button>
-              </div>
-            </form>
+            {/* Search Component */}
+            <div className="flex-1">
+              <Search
+                placeholder="100% hàng thật"
+                className="w-full"
+                maxResults={6}
+              />
+            </div>
 
             {/* Quick actions */}
             <nav

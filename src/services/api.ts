@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Category, Book, User, Product, Order, LoginRequest, LoginResponse, CartItem, CartRequest, CartResponse } from '../types';
+import type { Category, Book, User, Order, LoginRequest, LoginResponse, CartRequest, CartResponse } from '../types';
 
 // Create axios instance with base configuration
 const api = axios.create({
@@ -154,62 +154,8 @@ export const booksApi = {
     }
   },
 
-  // Get books by category
-  getByCategory: async (categoryId: number): Promise<Book[]> => {
-    try {
-      const response = await api.get<Book[]>(`/books?category=${categoryId}`);
-      return response.data;
-    } catch (error) {
-      throw new Error(
-        axios.isAxiosError(error)
-          ? error.response?.data?.message || error.message
-          : 'Failed to fetch books by category'
-      );
-    }
-  },
-
-  // Search books
-  search: async (query: string): Promise<Book[]> => {
-    try {
-      const response = await api.get<Book[]>(`/books?search=${encodeURIComponent(query)}`);
-      return response.data;
-    } catch (error) {
-      throw new Error(
-        axios.isAxiosError(error)
-          ? error.response?.data?.message || error.message
-          : 'Failed to search books'
-      );
-    }
-  },
-
-  // Get books by author
-  getByAuthor: async (authorId: number): Promise<Book[]> => {
-    try {
-      const response = await api.get<Book[]>(`/books?author=${authorId}`);
-      return response.data;
-    } catch (error) {
-      throw new Error(
-        axios.isAxiosError(error)
-          ? error.response?.data?.message || error.message
-          : 'Failed to fetch books by author'
-      );
-    }
-  },
-
-  // Get related books (optimized endpoint for related products)
-  getRelated: async (bookId: string, type: 'category' | 'author', limit = 6): Promise<Book[]> => {
-    try {
-      const response = await api.get<Book[]>(`/books/${bookId}/related?type=${type}&limit=${limit}`);
-      return response.data;
-    } catch (error) {
-      // Fallback to existing methods if the optimized endpoint doesn't exist
-      throw new Error(
-        axios.isAxiosError(error)
-          ? error.response?.data?.message || error.message
-          : 'Failed to fetch related books'
-      );
-    }
-  },
+  // Note: The following methods are not supported by the current API
+  // Only basic CRUD operations are available: GET, POST, PUT by id, GET by id, DELETE by id
 
   // Create new book
   create: async (book: Omit<Book, 'id'>): Promise<Book> => {
@@ -252,7 +198,6 @@ export const booksApi = {
     }
   },
 };
-
 
 // Users API functions
 export const usersApi = {
@@ -321,78 +266,6 @@ export const usersApi = {
         axios.isAxiosError(error)
           ? error.response?.data?.message || error.message
           : 'Failed to delete user'
-      );
-    }
-  },
-};
-
-// Products API functions
-export const productsApi = {
-  // Get all products
-  getAll: async (): Promise<Product[]> => {
-    try {
-      const response = await api.get<Product[]>('/products');
-      return response.data;
-    } catch (error) {
-      throw new Error(
-        axios.isAxiosError(error)
-          ? error.response?.data?.message || error.message
-          : 'Failed to fetch products'
-      );
-    }
-  },
-
-  // Get product by ID
-  getById: async (id: string): Promise<Product> => {
-    try {
-      const response = await api.get<Product>(`/products/${id}`);
-      return response.data;
-    } catch (error) {
-      throw new Error(
-        axios.isAxiosError(error)
-          ? error.response?.data?.message || error.message
-          : 'Failed to fetch product'
-      );
-    }
-  },
-
-  // Create new product
-  create: async (product: Omit<Product, 'id' | 'createdAt'>): Promise<Product> => {
-    try {
-      const response = await api.post<Product>('/products', product);
-      return response.data;
-    } catch (error) {
-      throw new Error(
-        axios.isAxiosError(error)
-          ? error.response?.data?.message || error.message
-          : 'Failed to create product'
-      );
-    }
-  },
-
-  // Update product
-  update: async (id: string, product: Partial<Product>): Promise<Product> => {
-    try {
-      const response = await api.put<Product>(`/products/${id}`, product);
-      return response.data;
-    } catch (error) {
-      throw new Error(
-        axios.isAxiosError(error)
-          ? error.response?.data?.message || error.message
-          : 'Failed to update product'
-      );
-    }
-  },
-
-  // Delete product
-  delete: async (id: string): Promise<void> => {
-    try {
-      await api.delete(`/products/${id}`);
-    } catch (error) {
-      throw new Error(
-        axios.isAxiosError(error)
-          ? error.response?.data?.message || error.message
-          : 'Failed to delete product'
       );
     }
   },
@@ -652,15 +525,12 @@ export const cartsApi = {
 };
 
 // Legacy exports for backward compatibility
-// These can be removed once all components are updated to use the new API structure
+// Currently used by admin hooks: useUserManagement, useBookManagement, useOrderManagement
+// TODO: Update admin hooks to use the new API structure (usersApi, booksApi, ordersApi)
 export const fetchUsers = usersApi.getAll;
 export const createUser = usersApi.create;
 export const updateUser = usersApi.update;
 export const deleteUser = usersApi.delete;
-
-export const createProduct = productsApi.create;
-export const updateProduct = productsApi.update;
-export const deleteProduct = productsApi.delete;
 
 export const createBook = booksApi.create;
 export const updateBook = booksApi.update;

@@ -29,26 +29,36 @@ const ProductDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+
+  const fetchBook = async () => {
+    if (!id) {
+      setError('ID sản phẩm không hợp lệ');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      const bookData = await booksApi.getById(id);
+      setBook(bookData);
+      setRetryCount(0); // Reset retry count on success
+    } catch (err) {
+      console.error('Error fetching book:', err);
+      setError(err instanceof Error ? err.message : 'Không thể tải thông tin sản phẩm');
+      setBook(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRetry = () => {
+    setRetryCount(prev => prev + 1);
+    fetchBook();
+  };
 
   useEffect(() => {
-    const fetchBook = async () => {
-      if (!id) {
-        setError('Product ID is required');
-        setLoading(false);
-        return;
-      }
-
-      try {
-        setLoading(true);
-        const bookData = await booksApi.getById(id);
-        setBook(bookData);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch product');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchBook();
   }, [id]);
 
@@ -161,8 +171,40 @@ const ProductDetail: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50">
         <Header />
-        <div className="flex items-center justify-center h-96">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="container mx-auto px-4 py-4">
+          {/* Loading Skeleton */}
+          <div className="animate-pulse">
+            {/* Breadcrumb skeleton */}
+            <div className="h-4 bg-gray-200 rounded w-64 mb-4"></div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              {/* Image skeleton */}
+              <div className="lg:col-span-3">
+                <div className="aspect-square bg-gray-200 rounded-lg"></div>
+              </div>
+
+              {/* Content skeleton */}
+              <div className="lg:col-span-6 space-y-4">
+                <div className="h-8 bg-gray-200 rounded w-3/4"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                <div className="h-6 bg-gray-200 rounded w-1/4"></div>
+                <div className="space-y-2">
+                  <div className="h-4 bg-gray-200 rounded"></div>
+                  <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                  <div className="h-4 bg-gray-200 rounded w-4/6"></div>
+                </div>
+              </div>
+
+              {/* Sidebar skeleton */}
+              <div className="lg:col-span-3">
+                <div className="bg-white rounded-lg p-4 space-y-4">
+                  <div className="h-6 bg-gray-200 rounded"></div>
+                  <div className="h-10 bg-gray-200 rounded"></div>
+                  <div className="h-10 bg-gray-200 rounded"></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <Footer />
       </div>
@@ -174,12 +216,42 @@ const ProductDetail: React.FC = () => {
       <div className="min-h-screen bg-gray-50">
         <Header />
         <div className="container mx-auto px-4 py-8">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Product Not Found</h1>
-            <p className="text-gray-600 mb-6">{error || 'The product you are looking for does not exist.'}</p>
-            <Button onClick={() => navigate('/')}>
-              Return to Home
-            </Button>
+          <div className="max-w-md mx-auto text-center">
+            <div className="bg-white rounded-lg shadow-sm p-8">
+              <div className="w-16 h-16 mx-auto mb-4 text-red-500">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-full h-full">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <h1 className="text-xl font-semibold text-gray-900 mb-3">
+                {error ? 'Lỗi tải sản phẩm' : 'Không tìm thấy sản phẩm'}
+              </h1>
+              <p className="text-gray-600 mb-6">
+                {error || 'Sản phẩm bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.'}
+              </p>
+              {error && error.includes('Network Error') && (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                  <p className="text-sm text-yellow-800">
+                    <strong>Lưu ý:</strong> Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng hoặc thử lại sau.
+                  </p>
+                </div>
+              )}
+              <div className="space-y-3">
+                <Button
+                  onClick={handleRetry}
+                  className="w-full bg-blue-600 hover:bg-blue-700"
+                  disabled={loading}
+                >
+                  {loading ? 'Đang thử lại...' : `Thử lại${retryCount > 0 ? ` (${retryCount})` : ''}`}
+                </Button>
+                <Button
+                  onClick={() => navigate('/')}
+                  className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700"
+                >
+                  Về trang chủ
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
         <Footer />
@@ -196,7 +268,7 @@ const ProductDetail: React.FC = () => {
       <main className="container mx-auto px-4 py-4">
         {/* Breadcrumb */}
         <Breadcrumb
-          categoryName={book.categories.name}
+          categoryName={book.categories?.name || 'Sách'}
           productName={book.name}
           onNavigateHome={() => navigate('/')}
         />
@@ -235,7 +307,7 @@ const ProductDetail: React.FC = () => {
             <div className="mt-8">
               <RelatedProducts 
                 currentBook={book}
-                onProductClick={(productId) => navigate(`/product/${productId}`)}
+                onProductClick={(productId: string) => navigate(`/product/${productId}`)}
               />
             </div>
 

@@ -50,13 +50,12 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
       await login(formData.email, formData.password);
       setSuccess('Đăng nhập thành công!');
-      
-      // Close modal after successful login
-      setTimeout(() => {
-        onClose();
-        setFormData({ email: '', password: '' });
-        setSuccess(null);
-      }, 1000);
+
+      // Close modal immediately after successful login
+      // The AuthContext will handle automatic redirection based on user role
+      onClose();
+      setFormData({ email: '', password: '' });
+      setSuccess(null);
 
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Đăng nhập thất bại');

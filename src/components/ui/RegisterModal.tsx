@@ -63,13 +63,12 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose, o
       // Call register function from AuthContext
       await register(formData.email, formData.password);
       setSuccess('Đăng ký thành công!');
-      
-      // Close modal after successful registration
-      setTimeout(() => {
-        onClose();
-        setFormData({ email: '', password: '', confirmPassword: '' });
-        setSuccess(null);
-      }, 1000);
+
+      // Close modal immediately after successful registration
+      // The AuthContext will handle automatic redirection based on user role
+      onClose();
+      setFormData({ email: '', password: '', confirmPassword: '' });
+      setSuccess(null);
 
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Đăng ký thất bại');

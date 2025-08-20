@@ -12,6 +12,8 @@ interface AuthContextType {
   logout: () => void;
   updateUserContext: (userData: Partial<LoginResponse['user']>) => void;
   loading: boolean;
+  shouldRedirect: boolean;
+  clearRedirectFlag: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -24,6 +26,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<LoginResponse['user'] | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [shouldRedirect, setShouldRedirect] = useState(false);
 
   // Initialize auth state from localStorage
   useEffect(() => {
@@ -51,14 +54,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string): Promise<void> => {
     try {
       const response = await authApi.login({ email, password });
-      
+
       // Save to localStorage
       localStorage.setItem('accessToken', response.accessToken);
       localStorage.setItem('user', JSON.stringify(response.user));
-      
+
       // Update state
       setAccessToken(response.accessToken);
       setUser(response.user);
+
+      // Set flag to trigger redirect
+      setShouldRedirect(true);
     } catch (error) {
       console.error('Login failed:', error);
       throw error;
@@ -69,14 +75,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       // Call register API endpoint
       const response = await authApi.register({ email, password });
-      
+
       // Save to localStorage
       localStorage.setItem('accessToken', response.accessToken);
       localStorage.setItem('user', JSON.stringify(response.user));
-      
+
       // Update state
       setAccessToken(response.accessToken);
       setUser(response.user);
+
+      // Set flag to trigger redirect
+      setShouldRedirect(true);
     } catch (error) {
       console.error('Register failed:', error);
       throw error;
@@ -105,6 +114,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  // Function to clear redirect flag
+  const clearRedirectFlag = () => {
+    setShouldRedirect(false);
+  };
+
   const value: AuthContextType = {
     user,
     accessToken,
@@ -114,6 +128,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     logout,
     updateUserContext,
     loading,
+    shouldRedirect,
+    clearRedirectFlag,
   };
 
   return (

@@ -16,50 +16,12 @@ interface UseRelatedProductsOptions {
 export const useRelatedProducts = ({ currentBook, initialTab = 'category' }: UseRelatedProductsOptions) => {
   const [relatedProducts, setRelatedProducts] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<TabType>(initialTab);
+  const [activeTab] = useState<TabType>(initialTab); // Remove setActiveTab since we're only using category
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   const debounceTimeoutRef = useRef<number | undefined>(undefined);
 
-  // Memoize author availability check
-  const hasAuthors = useMemo(() => {
-    return currentBook?.authors && currentBook.authors.length > 0;
-  }, [currentBook?.authors]);
 
-  // Generate mock data based on current book
-  const generateMockData = useCallback((type: TabType): Book[] => {
-    if (!currentBook) return [];
-    
-    const mockBooks: Book[] = [];
-    const basePrice = currentBook.current_seller?.price || 100000;
-    
-    for (let i = 1; i <= 3; i++) {
-      const mockBook: Book = {
-        ...currentBook,
-        id: `mock-${type}-${i}`,
-        name: type === 'category' 
-          ? `Sách cùng thể loại ${i} - ${currentBook.categories?.name || 'Thể loại'}`
-          : `Sách cùng tác giả ${i} - ${currentBook.authors?.[0]?.name || 'Tác giả'}`,
-        authors: type === 'author' && currentBook.authors 
-          ? currentBook.authors 
-          : [{ id: i, name: `Tác giả ${String.fromCharCode(64 + i)}`, slug: `tac-gia-${i}` }],
-        current_seller: {
-          ...currentBook.current_seller,
-          id: i,
-          name: `Nhà sách ${String.fromCharCode(64 + i)}`,
-          price: Math.round(basePrice * (0.8 + Math.random() * 0.4)),
-          is_best_store: i === 2
-        },
-        original_price: Math.round(basePrice * (1.2 + Math.random() * 0.3)),
-        rating_average: Math.round((3.5 + Math.random() * 1.5) * 10) / 10,
-        book_cover: currentBook.book_cover || null,
-        images: currentBook.images || []
-      };
-      mockBooks.push(mockBook);
-    }
-    
-    return mockBooks;
-  }, [currentBook]);
 
   // Get cache key for current request
   const getCacheKey = useCallback((bookId: string, tab: TabType) => {
@@ -85,77 +47,78 @@ export const useRelatedProducts = ({ currentBook, initialTab = 'category' }: Use
 
   // Fetch related products from API with retry logic and caching
   const fetchRelatedProducts = useCallback(async (retryAttempt = 0) => {
-    if (!currentBook) return;
-    
-    const cacheKey = getCacheKey(currentBook.id, activeTab);
-    
-    // Check cache first
-    const cachedData = getCachedData(cacheKey);
-    if (cachedData) {
-      setRelatedProducts(cachedData);
-      setLoading(false);
-      setError(null);
-      return;
-    }
-    
-    setLoading(true);
-    setError(null);
-
     try {
-      let products: Book[] = [];
-      
-      // Try the optimized related products endpoint first
-      try {
-        products = await booksApi.getRelated(currentBook.id, activeTab, 6);
-      } catch (relatedApiError) {
-        // Fallback to individual API calls if optimized endpoint fails
-        if (activeTab === 'category') {
-          products = await booksApi.getByCategory(currentBook.categories.id);
-          products = products.filter(book => book.id !== currentBook.id);
-        } else {
-          if (hasAuthors) {
-            try {
-              const currentAuthorId = currentBook.authors![0].id;
-              products = await booksApi.getByAuthor(currentAuthorId);
-              products = products.filter(book => book.id !== currentBook.id);
-            } catch (authorApiError) {
-              const allBooks = await booksApi.getAll();
-              const currentAuthorId = currentBook.authors![0].id;
-              products = allBooks.filter(book => 
-                book.id !== currentBook.id &&
-                book.authors?.some(author => author.id === currentAuthorId)
-              );
-            }
-          }
-        }
+      if (!currentBook) {
+        setRelatedProducts([]);
+        setLoading(false);
+        return;
       }
-      
+
+      const cacheKey = getCacheKey(currentBook.id, activeTab);
+
+      // Check cache first
+      const cachedData = getCachedData(cacheKey);
+      if (cachedData) {
+        setRelatedProducts(cachedData);
+        setLoading(false);
+        setError(null);
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+
+      let products: Book[] = [];
+
+      // Get books by same category using getAll and filter client-side
+      if (currentBook.categories?.id) {
+        console.log('Fetching related products for category:', currentBook.categories.id, currentBook.categories.name);
+        try {
+          // Get all books and filter by same category
+          const allBooks = await booksApi.getAll();
+          console.log('Total books from API:', allBooks.length);
+
+          // Filter by same category and exclude current book
+          products = allBooks.filter(book =>
+            book.categories?.id === currentBook.categories?.id &&
+            book.id !== currentBook.id
+          );
+          console.log('Filtered products (same category, excluding current):', products.length, 'items');
+        } catch (apiError) {
+          console.error('Failed to fetch books:', apiError);
+          products = [];
+        }
+      } else {
+        console.warn('No category ID found for current book:', currentBook.categories);
+      }
+
       const limitedProducts = products.slice(0, 6);
-      
+
       if (limitedProducts.length > 0) {
         setRelatedProducts(limitedProducts);
         setCachedData(cacheKey, limitedProducts);
         setRetryCount(0);
       } else {
-        const mockData = generateMockData(activeTab);
-        setRelatedProducts(mockData);
+        // If no related products found, show empty array
+        setRelatedProducts([]);
       }
     } catch (err) {
+      console.error('Error in fetchRelatedProducts:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch related products';
       setError(errorMessage);
-      
-      if (retryAttempt < 2 && (errorMessage.includes('network') || errorMessage.includes('timeout'))) {
+
+      if (retryAttempt < 2) {
         setTimeout(() => {
           setRetryCount(prev => prev + 1);
           fetchRelatedProducts(retryAttempt + 1);
         }, 1000 * (retryAttempt + 1));
       } else {
-        setRelatedProducts(generateMockData(activeTab));
+        setRelatedProducts([]);
       }
     } finally {
       setLoading(false);
     }
-  }, [currentBook, activeTab, hasAuthors, generateMockData, getCacheKey, getCachedData, setCachedData]);
+  }, [currentBook, activeTab, getCacheKey, getCachedData, setCachedData]);
 
   // Debounced fetch function
   const debouncedFetch = useCallback(() => {
@@ -179,14 +142,6 @@ export const useRelatedProducts = ({ currentBook, initialTab = 'category' }: Use
     };
   }, [debouncedFetch]);
 
-  const handleTabChange = useCallback((tab: TabType) => {
-    if (tab !== activeTab) {
-      setActiveTab(tab);
-      setError(null);
-      setLoading(true);
-    }
-  }, [activeTab]);
-
   const handleRetry = useCallback(() => {
     setRetryCount(0);
     fetchRelatedProducts();
@@ -196,10 +151,7 @@ export const useRelatedProducts = ({ currentBook, initialTab = 'category' }: Use
     relatedProducts,
     loading,
     error,
-    activeTab,
     retryCount,
-    hasAuthors,
-    handleTabChange,
     handleRetry
   };
 };

@@ -3,12 +3,46 @@ import type { Book } from '../../../types';
 import ProductCard from '../product-listing/ProductCard';
 import { useRelatedProducts } from '../../../hooks';
 
+// Error Boundary Component
+class RelatedProductsErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('RelatedProducts Error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="bg-white rounded-lg shadow-sm mt-6 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Sản phẩm tương tự</h3>
+          <div className="text-center py-8 text-gray-500">
+            <p>Không thể tải sản phẩm tương tự</p>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 interface RelatedProductsProps {
   currentBook: Book;
   onProductClick?: (bookId: string) => void;
 }
 
-const RelatedProducts: React.FC<RelatedProductsProps> = ({
+const RelatedProductsContent: React.FC<RelatedProductsProps> = ({
   currentBook,
   onProductClick,
 }) => {
@@ -19,7 +53,7 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({
     error,
     retryCount,
     handleRetry
-  } = useRelatedProducts({ currentBook });
+  } = useRelatedProducts({ currentBook, initialTab: 'category' });
 
   // Always show only 5 products
   const productsToShow = relatedProducts.slice(0, 5);
@@ -95,7 +129,10 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({
           </div>
           <p className="text-lg font-medium mb-2">Không tìm thấy sản phẩm tương tự</p>
           <p className="text-sm mb-4">
-            Chưa có sản phẩm nào khác tương tự
+            {currentBook?.categories?.name
+              ? `Chưa có sản phẩm nào khác trong danh mục "${currentBook.categories.name}"`
+              : 'Chưa có sản phẩm nào khác tương tự'
+            }
           </p>
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
@@ -110,6 +147,10 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({
               </button>
             </div>
           )}
+          <div className="mt-4 text-xs text-gray-400">
+            <p>Debug: Category ID = {currentBook?.categories?.id || 'N/A'}</p>
+            <p>Debug: Category Name = {currentBook?.categories?.name || 'N/A'}</p>
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -128,6 +169,15 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({
         </div>
       )}
     </div>
+  );
+};
+
+// Main component with error boundary
+const RelatedProducts: React.FC<RelatedProductsProps> = (props) => {
+  return (
+    <RelatedProductsErrorBoundary>
+      <RelatedProductsContent {...props} />
+    </RelatedProductsErrorBoundary>
   );
 };
 
