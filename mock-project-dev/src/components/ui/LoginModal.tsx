@@ -2,43 +2,26 @@ import React from "react";
 import { FiX } from "react-icons/fi";
 import LoginForm from "./auth/LoginForm";
 import RegisterForm from "./auth/RegisterForm";
+import LoginEntry from "./auth/LoginEntry";
 
-type View = "login" | "register";
+type View = "entry" | "email" | "register";
 
 export default function LoginModal({
   open,
   onClose,
-  initialView = "login",
+  initialView = "entry", // mặc định mở ở màn giống ảnh
 }: {
   open: boolean;
   onClose: () => void;
   initialView?: View;
 }) {
   const [view, setView] = React.useState<View>(initialView);
-  const [flash, setFlash] = React.useState<string | null>(null);
 
-  // Đồng bộ khi mở lại modal
   React.useEffect(() => {
-    if (open) {
-      setView(initialView);
-      setFlash(null);
-    }
+    if (open) setView(initialView);
   }, [open, initialView]);
 
-  // Tự ẩn flash sau 4s
-  React.useEffect(() => {
-    if (!flash) return;
-    const t = setTimeout(() => setFlash(null), 4000);
-    return () => clearTimeout(t);
-  }, [flash]);
-
   if (!open) return null;
-
-  // Handler: sau khi đăng ký xong -> quay về Login + hiện flash
-  const handleRegisterSuccess = () => {
-    setView("login");
-    setFlash("Tạo tài khoản thành công, vui lòng đăng nhập.");
-  };
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center">
@@ -54,27 +37,30 @@ export default function LoginModal({
 
         <div className="flex flex-col md:flex-row">
           <div className="w-full md:w-[60%] p-6 sm:p-8">
-            {/* Flash message chỉ hiện ở tab Login */}
-            {view === "login" && flash && (
-              <div className="mb-4 rounded-md border border-emerald-200 bg-emerald-50 text-emerald-800 px-3 py-2 text-sm">
-                {flash}
-              </div>
+            {view === "entry" && (
+              <LoginEntry
+                onEmail={() => setView("email")}
+                onSwitch={() => setView("register")}
+                onSuccess={onClose} // đăng nhập google xong -> đóng modal
+              />
             )}
 
-            {view === "login" ? (
+            {view === "email" && (
               <LoginForm
                 onSwitch={() => setView("register")}
-                onSuccess={onClose} // đăng nhập xong -> đóng modal
+                onSuccess={onClose} // đăng nhập email xong -> đóng modal
               />
-            ) : (
+            )}
+
+            {view === "register" && (
               <RegisterForm
-                onSwitch={() => setView("login")}
-                onSuccess={handleRegisterSuccess} // đăng ký xong -> quay về Login + flash
+                onSwitch={() => setView("email")} // từ register quay về login email
+                onSuccess={() => setView("email")} // đăng ký xong -> về login email
               />
             )}
           </div>
 
-          {/* Panel phải giống Tiki */}
+          {/* Panel phải giữ nguyên */}
           <div className="w-full md:w-[40%] bg-sky-50 p-6 sm:p-8 flex flex-col items-center justify-center text-center gap-3">
             <img
               src="https://salt.tikicdn.com/ts/upload/df/48/21/b4d225f471fe06887284e1341751b36e.png"

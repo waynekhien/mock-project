@@ -164,7 +164,7 @@ const Header: React.FC = () => {
       <LoginModal
         open={loginOpen}
         onClose={() => setLoginOpen(false)}
-        initialView="login"
+        initialView="entry"
       />
 
       {/* Cart Popup */}

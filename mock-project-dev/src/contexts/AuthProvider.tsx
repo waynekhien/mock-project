@@ -101,6 +101,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     googleLogin,
     logout,
   };
+  const googleOAuthLogin = async (accessToken: string) => {
+    const { data } = await api.post("/auth/google-oauth", { accessToken });
+    saveToken(data.accessToken);
+    setUser(data.user);
+  };
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 };
 
