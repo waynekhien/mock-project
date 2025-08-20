@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Category, Book, User, Order, LoginRequest, LoginResponse, CartRequest, CartResponse } from '../types';
+import type { Category, Book, User, Order, OrderItem, LoginRequest, LoginResponse, CartRequest, CartResponse } from '../types';
 
 // Create axios instance with base configuration
 const api = axios.create({
@@ -10,27 +10,17 @@ const api = axios.create({
   timeout: 10000, // 10 seconds timeout
 });
 
-// Request interceptor for logging and auth
+// Request interceptor for auth
 api.interceptors.request.use(
   (config) => {
-    console.log(`Making ${config.method?.toUpperCase()} request to ${config.url}`);
-    
     // Add auth token if available
     const token = localStorage.getItem('accessToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    
-    console.log('Request config:', {
-      url: config.url,
-      method: config.method,
-      headers: config.headers,
-      data: config.data
-    });
     return config;
   },
   (error) => {
-    console.error('Request error:', error);
     return Promise.reject(error);
   }
 );
@@ -38,16 +28,9 @@ api.interceptors.request.use(
 // Response interceptor for error handling
 api.interceptors.response.use(
   (response) => {
-    console.log('Response received:', response.status, response.data);
     return response;
   },
   (error) => {
-    console.error('Response error:', {
-      status: error.response?.status,
-      statusText: error.response?.statusText,
-      data: error.response?.data,
-      message: error.message
-    });
     return Promise.reject(error);
   }
 );

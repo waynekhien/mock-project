@@ -1,26 +1,127 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../contexts/CartContext';
 import { useDelivery } from '../../contexts/DeliveryContext';
+import { usePayment } from '../../contexts/PaymentContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { ordersApi } from '../../services/api';
 import { formatPrice } from '../../lib/format';
+
 
 const OrderSummary: React.FC = () => {
   const navigate = useNavigate();
-  const { items, totalItems, totalPrice } = useCart();
-  const { getDeliveryFee, getDeliveryDiscount } = useDelivery();
+  const { user } = useAuth();
+  const { items, totalItems, totalPrice, clearCart } = useCart();
+  const { getDeliveryFee, getDeliveryDiscount, selectedDelivery } = useDelivery();
+  const { getPaymentMethodName, selectedPayment } = usePayment();
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+
+  // Helper function to get delivery method details
+  const getDeliveryMethodDetails = () => {
+    switch (selectedDelivery) {
+      case 'now':
+        return {
+          name: 'Express',
+          time: '1-2 ngày',
+          description: 'Giao hàng nhanh'
+        };
+      case 'standard':
+        return {
+          name: 'Standard',
+          time: '3-5 ngày',
+          description: 'Giao hàng tiêu chuẩn'
+        };
+      default:
+        return {
+          name: 'Standard',
+          time: '3-5 ngày',
+          description: 'Giao hàng tiêu chuẩn'
+        };
+    }
+  };
 
   // Calculate discounts and fees based on selected delivery method
   const subtotal = totalPrice;
   const shippingFee = getDeliveryFee();
   const shippingDiscount = getDeliveryDiscount();
-  
+
   // Calculate final total
   const finalTotal = subtotal + shippingFee + shippingDiscount;
   const savings = Math.abs(shippingDiscount);
 
-  const handlePlaceOrder = () => {
-    // Navigate to order success page
-    navigate('/order-success');
+  const handlePlaceOrder = async () => {
+    if (!user) {
+      alert('Vui lòng đăng nhập để đặt hàng');
+      return;
+    }
+
+    if (!(user as any).address) {
+      alert('Vui lòng thêm địa chỉ giao hàng');
+      return;
+    }
+
+    setIsPlacingOrder(true);
+
+    try {
+      // Prepare order items
+      const orderItems = items.map(item => ({
+        book_id: item.productId,
+        quantity: item.quantity,
+        price: item.price
+      }));
+
+      const deliveryDetails = getDeliveryMethodDetails();
+      const paymentMethodName = getPaymentMethodName();
+
+      // Debug log
+      console.log('🔍 Payment Debug:', {
+        selectedPayment,
+        paymentMethodName,
+        willSaveAs: paymentMethodName === 'Thanh toán tiền mặt' ? 'cash' : 'bank_transfer'
+      });
+
+      // Create order data matching Order interface
+      const orderData = {
+        userId: user.id.toString(),
+        userName: (user as any).name || `${user.firstName} ${user.lastName}` || 'Unknown',
+        userEmail: user.email,
+        items: orderItems.map(item => {
+          const cartItem = items.find(i => i.productId === item.book_id);
+          return {
+            id: `item_${Date.now()}_${Math.random()}`,
+            productId: item.book_id,
+            productName: cartItem?.name || 'Unknown Product',
+            productImage: cartItem?.image || '',
+            quantity: item.quantity,
+            price: item.price,
+            total: item.quantity * item.price
+          };
+        }),
+        totalAmount: finalTotal,
+        status: 'pending' as const,
+        paymentMethod: (paymentMethodName === 'Thanh toán tiền mặt' ? 'cash' : 'bank_transfer') as 'cash' | 'card' | 'bank_transfer',
+        paymentMethodDisplay: paymentMethodName,
+        paymentStatus: 'pending' as const,
+        shippingAddress: (user as any).address || 'Chưa có địa chỉ',
+        deliveryMethod: deliveryDetails.name,
+        deliveryTime: deliveryDetails.time,
+        deliveryDescription: deliveryDetails.description,
+        notes: `Delivery: ${deliveryDetails.name} (${deliveryDetails.time}) - ${deliveryDetails.description}. Payment: ${paymentMethodName}`
+      };
+
+      const newOrder = await ordersApi.create(orderData);
+
+      // Clear cart after successful order
+      clearCart();
+
+      // Navigate to order success page with order ID
+      navigate(`/order-success?orderId=${newOrder.id}`);
+    } catch (error) {
+      console.error('Failed to place order:', error);
+      alert('Không thể đặt hàng. Vui lòng thử lại.');
+    } finally {
+      setIsPlacingOrder(false);
+    }
   };
 
   if (items.length === 0) {
@@ -83,9 +184,13 @@ const OrderSummary: React.FC = () => {
       {/* Place Order Button */}
       <button
         onClick={handlePlaceOrder}
-        className="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
+        disabled={isPlacingOrder || items.length === 0}
+        className="w-full bg-red-500 hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
       >
-        Đặt hàng
+        {isPlacingOrder && (
+          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+        )}
+        {isPlacingOrder ? 'Đang đặt hàng...' : 'Đặt hàng'}
       </button>
 
       {/* Product List (collapsed) */}

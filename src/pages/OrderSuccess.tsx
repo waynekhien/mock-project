@@ -1,29 +1,42 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { DeliveryProvider } from '../contexts/DeliveryContext';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
-import { useDelivery } from '../contexts/DeliveryContext';
 import { OrderSuccessMain, OrderSuccessInfo } from '../components/checkout';
+import { ordersApi } from '../services/api';
+import type { Order } from '../types';
 
 const OrderSuccessContent: React.FC = () => {
   const navigate = useNavigate();
-  const { clearCart, totalPrice } = useCart();
-  const { getDeliveryFee, getDeliveryDiscount } = useDelivery();
+  const [searchParams] = useSearchParams();
+  const { clearCart } = useCart();
+  const [order, setOrder] = useState<Order | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Calculate total price including delivery fees
-  const shippingFee = getDeliveryFee();
-  const shippingDiscount = getDeliveryDiscount();
-  const finalTotal = totalPrice + shippingFee + shippingDiscount;
+  // Get orderId from URL params
+  const orderId = searchParams.get('orderId');
 
-  // Generate realistic order ID based on current timestamp and total
-  const timestamp = Date.now();
-  const orderIdSuffix = (finalTotal.toString().slice(-3) + Math.floor(Math.random() * 100).toString().padStart(2, '0'));
-  const orderId = `TK${timestamp.toString().slice(-8)}${orderIdSuffix}`;
-  const orderDate = new Date().toLocaleDateString('vi-VN', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'numeric'
-  });
+  useEffect(() => {
+    const fetchOrder = async () => {
+      if (!orderId) {
+        setError('Không tìm thấy mã đơn hàng');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const orderData = await ordersApi.getById(orderId);
+        setOrder(orderData);
+      } catch (err) {
+        console.error('Failed to fetch order:', err);
+        setError('Không thể tải thông tin đơn hàng');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrder();
+  }, [orderId]);
 
   const handleBackToHome = () => {
     clearCart();
@@ -62,21 +75,45 @@ const OrderSuccessContent: React.FC = () => {
       {/* Main content */}
       <div className="flex-1">
         <div className="max-w-6xl mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            {/* Left column - OrderSuccessMain chiếm 3/4 diện tích */}
-            <div className="lg:col-span-3">
-              <OrderSuccessMain 
-                totalPrice={finalTotal}
-                paymentMethod="Thanh toán tiền mặt"
-                onBackToHome={handleBackToHome}
-              />
+          {loading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="text-lg">Đang tải thông tin đơn hàng...</div>
             </div>
-            
-            {/* Right column - OrderSuccessInfo chiếm 1/4 diện tích */}
-            <div className="lg:col-span-1">
-              <OrderSuccessInfo orderId={orderId} orderDate={orderDate} />
+          ) : error ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="text-red-500 text-lg">{error}</div>
             </div>
-          </div>
+          ) : order ? (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Left column - OrderSuccessMain chiếm 2/3 diện tích */}
+              <div className="lg:col-span-2">
+                <OrderSuccessMain
+                  totalPrice={order.totalAmount}
+                  paymentMethod={order.paymentMethodDisplay || (order.paymentMethod === 'cash' ? 'Thanh toán tiền mặt' : 'Thanh toán bằng thẻ/chuyển khoản')}
+                  deliveryMethod={order.deliveryMethod}
+                  deliveryTime={order.deliveryTime}
+                  onBackToHome={handleBackToHome}
+                />
+              </div>
+
+              {/* Right column - OrderSuccessInfo chiếm 1/3 diện tích */}
+              <div className="lg:col-span-1">
+                <OrderSuccessInfo
+                  orderId={order.id.toString()}
+                  orderDate={new Date(order.createdAt || Date.now()).toLocaleDateString('vi-VN', {
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'numeric'
+                  })}
+                  order={order}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="flex justify-center items-center h-64">
+              <div className="text-lg">Không tìm thấy thông tin đơn hàng</div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -117,11 +154,7 @@ const OrderSuccessContent: React.FC = () => {
 };
 
 const OrderSuccess: React.FC = () => {
-  return (
-    <DeliveryProvider>
-      <OrderSuccessContent />
-    </DeliveryProvider>
-  );
+  return <OrderSuccessContent />;
 };
 
 export default OrderSuccess;

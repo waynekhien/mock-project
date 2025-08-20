@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   BadgeCheck,
   Truck,
@@ -40,7 +40,22 @@ const commitments = [
 
 export default function Home() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  // Get search query from URL
+  useEffect(() => {
+    const search = searchParams.get('search');
+    if (search) {
+      setSearchQuery(search);
+      // Clear category selection when searching
+      setSelectedCategory(null);
+    } else {
+      // Clear search query when no search param
+      setSearchQuery('');
+    }
+  }, [searchParams]);
 
   const handleBookClick = (book: Book) => {
     console.log('Selected book:', book);
@@ -112,6 +127,7 @@ export default function Home() {
             {/* Product List - riêng biệt, không có border */}
             <ProductList
               selectedCategory={selectedCategory}
+              searchQuery={searchQuery}
               onBookClick={handleBookClick}
             />
           </div>

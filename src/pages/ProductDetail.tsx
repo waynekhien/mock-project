@@ -18,6 +18,7 @@ import { LoginModal } from '../components/ui/LoginModal';
 import { booksApi } from '../services/api';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
 import type { Book } from '../types';
 
 const ProductDetail: React.FC = () => {
@@ -25,6 +26,7 @@ const ProductDetail: React.FC = () => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { isAuthenticated } = useAuth();
+  const { showSuccess, showError } = useToast();
   const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -82,7 +84,7 @@ const ProductDetail: React.FC = () => {
     
     // Kiểm tra authentication trước
     if (!isAuthenticated) {
-      alert('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!');
+      showError('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!');
       setShowLoginModal(true);
       return;
     }
@@ -123,21 +125,26 @@ const ProductDetail: React.FC = () => {
       await addToCart(cartItem, quantity);
       
       console.log('✅ Successfully added', quantity, 'items to cart');
-      alert(`Đã thêm ${quantity} cuốn "${book.name}" vào giỏ hàng!`);
+      showSuccess(`Đã thêm ${quantity} cuốn "${book.name}" vào giỏ hàng!`);
     } catch (error) {
       console.error('❌ Error adding to cart:', error);
-      alert('Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng!');
+      showError('Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng!');
     }
   };
 
-  const handleBuyNow = (quantity: number) => {
+  const handleBuyNow = async (quantity: number) => {
     if (!book) return;
-    
-    // Simulate buy now action
-    console.log('Buy now:', { book, quantity });
-    
-    // Redirect to checkout (you can implement proper checkout flow)
-    alert(`Mua ngay ${quantity} cuốn "${book.name}"!`);
+
+    try {
+      // Add to cart first
+      await handleAddToCart(quantity);
+
+      // Then redirect to checkout
+      navigate('/checkout');
+    } catch (error) {
+      console.error('Error during buy now:', error);
+      showError('Có lỗi xảy ra khi mua hàng. Vui lòng thử lại.');
+    }
   };
 
   // const handleShare = async () => {

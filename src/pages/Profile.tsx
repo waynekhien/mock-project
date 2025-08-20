@@ -1,5 +1,5 @@
 import React from 'react';
-import { Header, Footer } from '../components/layout';
+import { Header } from '../components/layout';
 import { AccountInfo } from '../components/profile';
 import { useAuth } from '../contexts/AuthContext';
 import { User, Bell, ShoppingBag } from 'lucide-react';

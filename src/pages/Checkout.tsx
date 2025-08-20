@@ -1,6 +1,7 @@
 import React from 'react';
 import { DeliveryMethod, PaymentMethod, DeliveryAddress, OrderSummary } from '../components/checkout';
 import { DeliveryProvider } from '../contexts/DeliveryContext';
+import { PaymentProvider } from '../contexts/PaymentContext';
 
 const Checkout: React.FC = () => {
   return (
@@ -35,27 +36,29 @@ const Checkout: React.FC = () => {
       {/* Main content */}
       <div className="flex-1 py-8">
         <div className="max-w-6xl mx-auto px-4">
-          <DeliveryProvider>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Left column - Delivery method and Payment method */}
-              <div className="lg:col-span-2 space-y-6">
-                {/* Delivery Method - Top */}
-                <DeliveryMethod />
-                
-                {/* Payment Method - Below delivery method */}
-                <PaymentMethod />
-              </div>
+          <PaymentProvider>
+            <DeliveryProvider>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Left column - Delivery method and Payment method */}
+                <div className="lg:col-span-2 space-y-6">
+                  {/* Delivery Method - Top */}
+                  <DeliveryMethod />
 
-              {/* Right column - Delivery address and Order summary */}
-              <div className="lg:col-span-1 space-y-6">
-                {/* Delivery Address - Top right */}
-                <DeliveryAddress />
-                
-                {/* Order Summary - Bottom right */}
-                <OrderSummary />
+                  {/* Payment Method - Below delivery method */}
+                  <PaymentMethod />
+                </div>
+
+                {/* Right column - Delivery address and Order summary */}
+                <div className="lg:col-span-1 space-y-6">
+                  {/* Delivery Address - Top right */}
+                  <DeliveryAddress />
+
+                  {/* Order Summary - Bottom right */}
+                  <OrderSummary />
+                </div>
               </div>
-            </div>
-          </DeliveryProvider>
+            </DeliveryProvider>
+          </PaymentProvider>
         </div>
       </div>
 

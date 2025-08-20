@@ -194,6 +194,7 @@ export interface OrderItem {
   id: string;
   productId: string;
   productName: string;
+  productImage?: string;
   quantity: number;
   price: number;
   total: number;
@@ -208,8 +209,12 @@ export interface Order {
   totalAmount: number;
   status: 'pending' | 'confirmed' | 'shipping' | 'delivered' | 'cancelled';
   paymentMethod: 'cash' | 'card' | 'bank_transfer';
+  paymentMethodDisplay?: string;
   paymentStatus: 'pending' | 'paid' | 'failed';
   shippingAddress: string;
+  deliveryMethod?: string;
+  deliveryTime?: string;
+  deliveryDescription?: string;
   notes?: string;
   createdAt: string;
   updatedAt?: string;

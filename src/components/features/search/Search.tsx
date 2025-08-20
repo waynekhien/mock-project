@@ -130,8 +130,17 @@ const Search: React.FC<SearchProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setQuery(value);
-    debouncedSearch(value);
-    setIsOpen(value.length >= 2);
+
+    // If input is empty, clear search results and navigate to home
+    if (value.trim() === '') {
+      navigate('/');
+      setIsOpen(false);
+      setResults([]);
+      setHasSearched(false);
+    } else {
+      debouncedSearch(value);
+      setIsOpen(value.length >= 2);
+    }
   };
 
   // Handle result click
@@ -149,11 +158,10 @@ const Search: React.FC<SearchProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (query.trim()) {
-      // Just perform search and show results in dropdown
-      performSearch(query.trim());
-      setIsOpen(true);
-      // Keep focus on input for better UX
-      inputRef.current?.focus();
+      // Navigate to home page with search query
+      navigate(`/?search=${encodeURIComponent(query.trim())}`);
+      setIsOpen(false);
+      inputRef.current?.blur();
     }
   };
 
@@ -170,6 +178,8 @@ const Search: React.FC<SearchProps> = ({
       clearTimeout(debounceTimeoutRef.current);
     }
 
+    // Navigate to home to show all books
+    navigate('/');
     inputRef.current?.focus();
   };
 
@@ -187,36 +197,46 @@ const Search: React.FC<SearchProps> = ({
     <div ref={searchRef} className={`relative ${className}`}>
       {/* Search Input */}
       <form onSubmit={handleSubmit} className="relative">
-        <div className="relative">
-          <input
-            ref={inputRef}
-            type="text"
-            value={query}
-            onChange={handleInputChange}
-            placeholder={placeholder}
-            className="w-full px-4 py-2 pl-10 pr-10 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            onFocus={() => query.length >= 2 && setIsOpen(true)}
-          />
-          
-          {/* Search Icon */}
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3">
-            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
+        <div className="flex">
+          <div className="relative flex-1">
+            <input
+              ref={inputRef}
+              type="text"
+              value={query}
+              onChange={handleInputChange}
+              placeholder={placeholder}
+              className="w-full px-4 py-2 pl-10 pr-10 text-sm border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              onFocus={() => query.length >= 2 && setIsOpen(true)}
+            />
+
+            {/* Search Icon */}
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3">
+              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+
+            {/* Clear Button */}
+            {query && (
+              <button
+                type="button"
+                onClick={handleClear}
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
           </div>
 
-          {/* Clear Button */}
-          {query && (
-            <button
-              type="button"
-              onClick={handleClear}
-              className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          )}
+          {/* Search Button */}
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-r-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+          >
+            Tìm kiếm
+          </button>
         </div>
       </form>
 

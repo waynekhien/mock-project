@@ -23,6 +23,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
     email: '',
     password: '',
   });
+
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -116,6 +118,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                 {success}
               </Alert>
             )}
+
+
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="input">

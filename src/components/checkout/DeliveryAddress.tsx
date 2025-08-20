@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapPin, Edit3 } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
+import { usersApi } from '../../services/api';
 
 interface Address {
   id: string;
@@ -10,41 +12,66 @@ interface Address {
 }
 
 const DeliveryAddress: React.FC = () => {
+  const { user, updateUserContext } = useAuth();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<string>('');
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingAddress, setEditingAddress] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
   const [newAddress, setNewAddress] = useState({
     name: '',
     phone: '',
     address: ''
   });
 
-  const handleAddAddress = () => {
-    if (newAddress.name && newAddress.phone && newAddress.address) {
-      if (editingAddress) {
-        // Cập nhật địa chỉ hiện có
-        setAddresses(prev => prev.map(addr => 
-          addr.id === editingAddress 
-            ? { ...addr, name: newAddress.name, phone: newAddress.phone, address: newAddress.address }
-            : addr
-        ));
-        setEditingAddress(null);
-      } else {
-        // Thêm địa chỉ mới
-        const address: Address = {
-          id: Date.now().toString(),
-          name: newAddress.name,
-          phone: newAddress.phone,
-          address: newAddress.address,
-          isDefault: addresses.length === 0
-        };
-        setAddresses([...addresses, address]);
-        setSelectedAddress(address.id);
+  // Load user's existing address on mount
+  useEffect(() => {
+    // Skip auto-loading address since user object doesn't have address field
+    // User will need to manually add address
+  }, [user]);
+
+  const handleAddAddress = async () => {
+    if (newAddress.address && user) {
+      setSaving(true);
+
+      try {
+        // Skip API call for now since server requires password
+        // Just update local context and state
+
+        // Update local context with new address
+        updateUserContext({
+          address: newAddress.address
+        } as any);
+
+        if (editingAddress) {
+          // Cập nhật địa chỉ hiện có
+          setAddresses(prev => prev.map(addr =>
+            addr.id === editingAddress
+              ? { ...addr, address: newAddress.address }
+              : addr
+          ));
+          setEditingAddress(null);
+        } else {
+          // Thêm địa chỉ mới với thông tin từ user profile
+          const address: Address = {
+            id: 'user-address',
+            name: (user as any).name || `${user.firstName} ${user.lastName}` || 'Chưa có tên',
+            phone: user?.phone || 'Chưa có SĐT',
+            address: newAddress.address,
+            isDefault: true
+          };
+          setAddresses([address]);
+          setSelectedAddress(address.id);
+        }
+
+        setNewAddress({ name: '', phone: '', address: '' });
+        setShowAddForm(false);
+      } catch (error) {
+        console.error('Failed to save address:', error);
+        alert('Không thể lưu địa chỉ. Vui lòng thử lại.');
+      } finally {
+        setSaving(false);
       }
-      
-      setNewAddress({ name: '', phone: '', address: '' });
-      setShowAddForm(false);
     }
   };
 
@@ -61,6 +88,17 @@ const DeliveryAddress: React.FC = () => {
     }
   };
 
+  const handleAddNewAddress = () => {
+    // Only need to input address, name and phone will be displayed from user profile directly
+    setNewAddress({
+      name: '', // Will be displayed from user profile in form
+      phone: '', // Will be displayed from user profile in form
+      address: '' // User will input this
+    });
+    setEditingAddress(null);
+    setShowAddForm(true);
+  };
+
   const handleCancelForm = () => {
     setNewAddress({ name: '', phone: '', address: '' });
     setEditingAddress(null);
@@ -73,7 +111,7 @@ const DeliveryAddress: React.FC = () => {
         <h2 className="text-lg font-semibold">Giao tới</h2>
         {addresses.length > 0 && !showAddForm && (
           <button
-            onClick={() => setShowAddForm(true)}
+            onClick={handleAddNewAddress}
             className="self-start sm:self-auto text-blue-600 hover:text-blue-700 font-medium text-sm"
           >
             Thay đổi
@@ -88,7 +126,7 @@ const DeliveryAddress: React.FC = () => {
           <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">Chưa có địa chỉ giao hàng</h3>
           <p className="text-gray-600 mb-4 sm:mb-6 text-sm px-4">Thêm địa chỉ để tiếp tục đặt hàng</p>
           <button
-            onClick={() => setShowAddForm(true)}
+            onClick={handleAddNewAddress}
             className="bg-blue-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm sm:text-base"
           >
             + Thêm địa chỉ
@@ -168,28 +206,28 @@ const DeliveryAddress: React.FC = () => {
             {/* Họ và tên */}
             <div className="w-full">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Họ và tên <span className="text-red-500">*</span>
+                Họ và tên <span className="text-gray-400">(từ thông tin tài khoản)</span>
               </label>
               <input
                 type="text"
-                value={newAddress.name}
-                onChange={(e) => setNewAddress({ ...newAddress, name: e.target.value })}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm sm:text-base"
-                placeholder="Nhập họ và tên"
+                value={newAddress.name || (user as any).name || `${user?.firstName} ${user?.lastName}` || ''}
+                readOnly
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 text-sm sm:text-base cursor-not-allowed"
+                placeholder="Chưa có thông tin"
               />
             </div>
-            
+
             {/* Số điện thoại */}
             <div className="w-full">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Số điện thoại <span className="text-red-500">*</span>
+                Số điện thoại <span className="text-gray-400">(từ thông tin tài khoản)</span>
               </label>
               <input
                 type="tel"
-                value={newAddress.phone}
-                onChange={(e) => setNewAddress({ ...newAddress, phone: e.target.value })}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm sm:text-base"
-                placeholder="Nhập số điện thoại"
+                value={newAddress.phone || user?.phone || ''}
+                readOnly
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 text-sm sm:text-base cursor-not-allowed"
+                placeholder="Chưa có thông tin"
               />
             </div>
             
@@ -218,10 +256,13 @@ const DeliveryAddress: React.FC = () => {
             </button>
             <button
               onClick={handleAddAddress}
-              disabled={!newAddress.name || !newAddress.phone || !newAddress.address}
-              className="order-1 sm:order-2 px-4 sm:px-6 py-2 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-sm sm:text-base font-medium"
+              disabled={!newAddress.address || saving}
+              className="order-1 sm:order-2 px-4 sm:px-6 py-2 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-sm sm:text-base font-medium flex items-center justify-center gap-2"
             >
-              {editingAddress ? 'Cập nhật' : 'Thêm địa chỉ'}
+              {saving && (
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              )}
+              {saving ? 'Đang lưu...' : editingAddress ? 'Cập nhật' : 'Thêm địa chỉ'}
             </button>
           </div>
         </div>

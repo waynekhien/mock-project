@@ -6,6 +6,7 @@ import { AdminLayout } from './components/layout';
 import { ProtectedRoute } from './components/auth';
 import { CartProvider } from './contexts/CartContext';
 import { AuthProvider } from './contexts/AuthContext';
+import { ToastProvider } from './contexts/ToastContext';
 import { useRoleBasedRedirect } from './hooks';
 
 // Component to handle role-based redirection
@@ -80,11 +81,13 @@ const AppRoutes: React.FC = () => {
 function App() {
   return (
     <AuthProvider>
-      <CartProvider>
-        <Router>
-          <AppRoutes />
-        </Router>
-      </CartProvider>
+      <ToastProvider>
+        <CartProvider>
+          <Router>
+            <AppRoutes />
+          </Router>
+        </CartProvider>
+      </ToastProvider>
     </AuthProvider>
   );
 }

@@ -4,16 +4,18 @@ import type { Book, Category } from '../../../types';
 import ProductCard from './ProductCard';
 import { Pagination } from '../../ui';
 
-interface ProductListProps {
+export interface ProductListProps {
   className?: string;
   selectedCategory?: Category | null;
+  searchQuery?: string;
   onBookClick?: (book: Book) => void;
 }
 
-const ProductList: React.FC<ProductListProps> = ({ 
-  className = '', 
+const ProductList: React.FC<ProductListProps> = ({
+  className = '',
   selectedCategory,
-  onBookClick 
+  searchQuery,
+  onBookClick
 }) => {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -27,15 +29,35 @@ const ProductList: React.FC<ProductListProps> = ({
       try {
         setLoading(true);
         setError(null);
-        
-        let data: Book[];
+
+        // Get all books and filter client-side
+        const allBooks = await booksApi.getAll();
+        let filteredBooks = allBooks;
+
+        // Filter by category if selected
         if (selectedCategory) {
-          data = await booksApi.getByCategory(selectedCategory.id);
-        } else {
-          data = await booksApi.getAll();
+          filteredBooks = allBooks.filter(book =>
+            book.categories?.id === selectedCategory.id
+          );
         }
-        
-        setBooks(data);
+
+        // Filter by search query if provided
+        if (searchQuery && searchQuery.trim()) {
+          const searchTerm = searchQuery.toLowerCase().trim();
+          filteredBooks = filteredBooks.filter(book => {
+            return (
+              book.name.toLowerCase().includes(searchTerm) ||
+              book.short_description?.toLowerCase().includes(searchTerm) ||
+              book.description?.toLowerCase().includes(searchTerm) ||
+              book.authors?.some(author =>
+                author.name.toLowerCase().includes(searchTerm)
+              ) ||
+              book.categories?.name.toLowerCase().includes(searchTerm)
+            );
+          });
+        }
+
+        setBooks(filteredBooks);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch books');
         console.error('Error fetching books:', err);
@@ -45,8 +67,8 @@ const ProductList: React.FC<ProductListProps> = ({
     };
 
     fetchBooks();
-    setCurrentPage(1); // Reset về trang 1 khi category thay đổi
-  }, [selectedCategory]);
+    setCurrentPage(1); // Reset về trang 1 khi category hoặc search thay đổi
+  }, [selectedCategory, searchQuery]);
 
   const handleRetry = () => {
     setError(null);
@@ -123,9 +145,11 @@ const ProductList: React.FC<ProductListProps> = ({
               </div>
               <h3 className="text-xl font-medium text-gray-600 mb-2">No Books Found</h3>
               <p className="text-gray-500">
-                {selectedCategory 
-                  ? `No books found in "${selectedCategory.name}" category.`
-                  : 'No books available at the moment.'
+                {searchQuery
+                  ? `No books found for "${searchQuery}".`
+                  : selectedCategory
+                    ? `No books found in "${selectedCategory.name}" category.`
+                    : 'No books available at the moment.'
                 }
               </p>
             </div>
@@ -141,11 +165,17 @@ const ProductList: React.FC<ProductListProps> = ({
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            {selectedCategory ? selectedCategory.name : 'All Books'}
+            {searchQuery
+              ? `Search Results for "${searchQuery}"`
+              : selectedCategory
+                ? selectedCategory.name
+                : 'All Books'
+            }
           </h1>
           <p className="text-gray-600">
             {books.length} book{books.length !== 1 ? 's' : ''} found
-            {selectedCategory && ` in ${selectedCategory.name}`}
+            {searchQuery && ` for "${searchQuery}"`}
+            {selectedCategory && !searchQuery && ` in ${selectedCategory.name}`}
           </p>
         </div>
 

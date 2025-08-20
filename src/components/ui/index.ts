@@ -5,6 +5,7 @@ export { default as Select } from './Select';
 export { default as Modal } from './Modal';
 export { default as LoginModal } from './LoginModal';
 export { default as RegisterModal } from './RegisterModal';
+export { default as Toast } from './Toast';
 export { default as Loading, Skeleton, Spinner } from './Loading';
 export { default as Badge } from './Badge';
 export { default as Alert } from './Alert';

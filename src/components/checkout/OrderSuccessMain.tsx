@@ -1,15 +1,19 @@
 import React from 'react';
 
 interface OrderSuccessMainProps {
-  totalPrice: number;
+  totalPrice?: number;
   paymentMethod: string;
+  deliveryMethod?: string;
+  deliveryTime?: string;
   onBackToHome: () => void;
 }
 
-const OrderSuccessMain: React.FC<OrderSuccessMainProps> = ({ 
-  totalPrice, 
-  paymentMethod, 
-  onBackToHome 
+const OrderSuccessMain: React.FC<OrderSuccessMainProps> = ({
+  totalPrice,
+  paymentMethod,
+  deliveryMethod,
+  deliveryTime,
+  onBackToHome
 }) => {
 
   return (
@@ -49,7 +53,7 @@ const OrderSuccessMain: React.FC<OrderSuccessMainProps> = ({
                 {/* Success Message */}
                 <div className="text-center">
                   <h1 className="text-3xl font-bold mb-2">Yay, đặt hàng thành công!</h1>
-                  <p className="text-xl text-blue-100">Chuẩn bị tiền mặt {totalPrice.toLocaleString('vi-VN')} ₫</p>
+                  <p className="text-xl text-blue-100">Chuẩn bị tiền mặt {totalPrice?.toLocaleString('vi-VN') || '0'} ₫</p>
                 </div>
               </div>
             </div>
@@ -57,6 +61,16 @@ const OrderSuccessMain: React.FC<OrderSuccessMainProps> = ({
 
           {/* Payment Information - Below the gradient header */}
           <div className="p-8">
+            {/* Delivery Method Row */}
+            {deliveryMethod && (
+              <div className="flex justify-between items-center py-4 border-b">
+                <span className="text-gray-600 text-lg">Phương thức giao hàng</span>
+                <span className="font-medium text-lg">
+                  {deliveryMethod} {deliveryTime && `(${deliveryTime})`}
+                </span>
+              </div>
+            )}
+
             {/* Payment Method Row */}
             <div className="flex justify-between items-center py-4 border-b">
               <span className="text-gray-600 text-lg">Phương thức thanh toán</span>
@@ -68,7 +82,7 @@ const OrderSuccessMain: React.FC<OrderSuccessMainProps> = ({
               <span className="text-gray-600 text-lg">Tổng cộng</span>
               <div className="text-right">
                 <div className="text-2xl font-bold text-gray-900 mb-1">
-                  {totalPrice.toLocaleString('vi-VN')} ₫
+                  {totalPrice?.toLocaleString('vi-VN') || '0'} ₫
                 </div>
                 <div className="text-sm text-gray-500">(Đã bao gồm VAT nếu có)</div>
               </div>

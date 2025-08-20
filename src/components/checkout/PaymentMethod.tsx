@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CreditCard, Smartphone } from 'lucide-react';
+import { usePayment } from '../../contexts/PaymentContext';
 
 interface PaymentOption {
   id: string;
@@ -19,7 +20,7 @@ interface InstallmentOption {
 }
 
 const PaymentMethod: React.FC = () => {
-  const [selectedPayment, setSelectedPayment] = useState<string>('cash');
+  const { selectedPayment, setSelectedPayment } = usePayment();
   const [showInstallments, setShowInstallments] = useState(false);
 
   const paymentOptions: PaymentOption[] = [
@@ -30,8 +31,8 @@ const PaymentMethod: React.FC = () => {
       type: 'cash'
     },
     {
-      id: 'viettel',
-      name: 'Viettel Money',
+      id: 'bank_transfer',
+      name: 'Thanh toán bằng thẻ/chuyển khoản',
       icon: <Smartphone className="w-5 h-5 text-red-500" />,
       type: 'ewallet'
     }
