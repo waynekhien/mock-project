@@ -1,5 +1,5 @@
 import React from 'react';
-import { Package } from 'lucide-react';
+
 import OrderItem from './OrderItem';
 import type { Order } from '../../types';
 

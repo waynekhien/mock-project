@@ -85,6 +85,7 @@ const OrderSummary: React.FC = () => {
         userId: user.id.toString(),
         userName: (user as any).name || `${user.firstName} ${user.lastName}` || 'Unknown',
         userEmail: user.email,
+        userPhone: (user as any).phone || '',
         items: orderItems.map(item => {
           const cartItem = items.find(i => i.productId === item.book_id);
           return {
@@ -94,6 +95,7 @@ const OrderSummary: React.FC = () => {
             productImage: cartItem?.image || '',
             quantity: item.quantity,
             price: item.price,
+            originalPrice: cartItem?.originalPrice || item.price,
             total: item.quantity * item.price
           };
         }),
@@ -106,7 +108,8 @@ const OrderSummary: React.FC = () => {
         deliveryMethod: deliveryDetails.name,
         deliveryTime: deliveryDetails.time,
         deliveryDescription: deliveryDetails.description,
-        notes: `Delivery: ${deliveryDetails.name} (${deliveryDetails.time}) - ${deliveryDetails.description}. Payment: ${paymentMethodName}`
+        notes: `Delivery: ${deliveryDetails.name} (${deliveryDetails.time}) - ${deliveryDetails.description}. Payment: ${paymentMethodName}`,
+        createdAt: new Date().toISOString()
       };
 
       const newOrder = await ordersApi.create(orderData);

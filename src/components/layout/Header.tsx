@@ -4,7 +4,7 @@ import {
   Home as HomeIcon,
   User,
   ShoppingCart,
-  Search as SearchIcon,
+
   ChevronDown,
 } from "lucide-react";
 import { useCart } from "../../contexts/CartContext";

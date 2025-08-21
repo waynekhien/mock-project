@@ -9,11 +9,11 @@ interface OrderItemProps {
   onCancelOrder?: (orderId: string) => void;
 }
 
-const OrderItem: React.FC<OrderItemProps> = ({ 
-  order, 
-  onViewDetails, 
-  onReorder, 
-  onCancelOrder 
+const OrderItem: React.FC<OrderItemProps> = ({
+  order,
+  onViewDetails,
+  onReorder,
+  onCancelOrder
 }) => {
   const getStatusIcon = (status: string) => {
     switch (status) {

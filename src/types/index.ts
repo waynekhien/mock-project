@@ -197,6 +197,8 @@ export interface OrderItem {
   productImage?: string;
   quantity: number;
   price: number;
+  originalPrice?: number;
+  discount?: number;
   total: number;
 }
 
@@ -205,6 +207,7 @@ export interface Order {
   userId: string;
   userName: string;
   userEmail: string;
+  userPhone?: string;
   items: OrderItem[];
   totalAmount: number;
   status: 'pending' | 'confirmed' | 'shipping' | 'delivered' | 'cancelled';

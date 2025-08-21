@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Phone, Mail } from 'lucide-react';
+import { User, Phone, Mail, Camera } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { updateUser, usersApi } from '../../services/api';
 
@@ -294,8 +294,8 @@ const AccountInfo: React.FC = () => {
                 <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center">
                   <User className="w-12 h-12 text-blue-500" />
                 </div>
-                <button className="absolute bottom-0 right-0 w-6 h-6 bg-gray-600 rounded-full flex items-center justify-center text-white text-xs">
-                  📷
+                <button className="absolute bottom-0 right-0 w-6 h-6 bg-gray-600 rounded-full flex items-center justify-center text-white">
+                  <Camera className="w-3 h-3" />
                 </button>
               </div>
               <div className="flex-1">
@@ -455,7 +455,7 @@ const AccountInfo: React.FC = () => {
               {showPhoneEdit ? (
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 mb-3">
-                    <Phone className="w-5 h-5 text-gray-600" />
+                    <Phone className="w-5 h-5 text-gray-600 flex-shrink-0" />
                     <p className="text-sm text-gray-600">Số điện thoại</p>
                   </div>
                   <input
@@ -483,20 +483,22 @@ const AccountInfo: React.FC = () => {
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Phone className="w-5 h-5 text-gray-600" />
-                    <div>
-                      <p className="text-sm text-gray-600">Số điện thoại</p>
-                      <p className="font-medium">{profile.phone || 'Chưa cập nhật'}</p>
+                <div className="flex justify-between gap-4">
+                  <div className="flex gap-3 flex-1 min-w-0">
+                    <Phone className="w-5 h-5 text-gray-600 flex-shrink-0 mt-1" />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm text-gray-600 mb-1">Số điện thoại</p>
+                      <p className="font-medium break-words">
+                        {profile.phone || 'Chưa cập nhật'}
+                      </p>
                     </div>
                   </div>
-                  <button 
+                  <button
                     onClick={() => {
                       setTempPhone(profile.phone);
                       setShowPhoneEdit(true);
                     }}
-                    className="text-blue-600 text-sm hover:underline"
+                    className="text-blue-600 text-sm hover:underline flex-shrink-0 self-start"
                   >
                     Cập nhật
                   </button>
@@ -509,7 +511,7 @@ const AccountInfo: React.FC = () => {
               {showEmailEdit ? (
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 mb-3">
-                    <Mail className="w-5 h-5 text-gray-600" />
+                    <Mail className="w-5 h-5 text-gray-600 flex-shrink-0" />
                     <p className="text-sm text-gray-600">Địa chỉ email</p>
                   </div>
                   <input
@@ -537,20 +539,22 @@ const AccountInfo: React.FC = () => {
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Mail className="w-5 h-5 text-gray-600" />
-                    <div>
-                      <p className="text-sm text-gray-600">Địa chỉ email</p>
-                      <p className="font-medium">{profile.email || 'Chưa cập nhật'}</p>
+                <div className="flex justify-between gap-4">
+                  <div className="flex gap-3 flex-1 min-w-0">
+                    <Mail className="w-5 h-5 text-gray-600 flex-shrink-0 mt-1" />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm text-gray-600 mb-1">Địa chỉ email</p>
+                      <p className="font-medium text-xs whitespace-nowrap">
+                        {profile.email || 'Chưa cập nhật'}
+                      </p>
                     </div>
                   </div>
-                  <button 
+                  <button
                     onClick={() => {
                       setTempEmail(profile.email);
                       setShowEmailEdit(true);
                     }}
-                    className="text-blue-600 text-sm hover:underline"
+                    className="text-blue-600 text-sm hover:underline flex-shrink-0 self-start"
                   >
                     Cập nhật
                   </button>

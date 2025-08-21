@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Category, Book, User, Order, OrderItem, LoginRequest, LoginResponse, CartRequest, CartResponse } from '../types';
+import type { Category, Book, User, Order, LoginRequest, LoginResponse, CartRequest, CartResponse } from '../types';
 
 // Create axios instance with base configuration
 const api = axios.create({

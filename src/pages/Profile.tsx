@@ -5,10 +5,11 @@ import { AccountInfo } from '../components/profile';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
 import { ordersApi } from '../services/api';
-import { User, Bell, ShoppingBag, Search } from 'lucide-react';
+import { User, Bell, Search, Package } from 'lucide-react';
 import OrderTabs from '../components/profile/OrderTabs';
 import OrderSearch from '../components/profile/OrderSearch';
 import OrderList from '../components/profile/OrderList';
+import OrderDetailView from '../components/order/OrderDetailView';
 import type { Order } from '../types';
 
 interface ProfileSidebarProps {
@@ -23,14 +24,18 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ activeTab, onTabChange 
     <div className="bg-white rounded-lg shadow-sm border p-6">
       {/* Profile Header */}
       <div className="text-center mb-6">
-        <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-          <User className="w-8 h-8 text-blue-500" />
+        <div className="w-16 h-16 rounded-full mx-auto mb-3 overflow-hidden">
+          <img
+            src="https://salt.tikicdn.com/desktop/img/avatar.png"
+            alt="Avatar"
+            className="w-full h-full object-cover"
+          />
         </div>
         <div>
           <p className="font-medium text-gray-900">Tài khoản của</p>
           <p className="font-semibold text-gray-900">
-            {user?.firstName && user?.lastName 
-              ? `${user.firstName} ${user.lastName}` 
+            {user?.firstName && user?.lastName
+              ? `${user.firstName} ${user.lastName}`
               : user?.firstName || user?.lastName || 'Người dùng'
             }
           </p>
@@ -69,7 +74,7 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ activeTab, onTabChange 
               : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
           }`}
         >
-          <ShoppingBag className="w-5 h-5" />
+          <Package className="w-5 h-5" />
           <span>Quản lý đơn hàng</span>
         </button>
       </nav>
@@ -88,6 +93,7 @@ const ProfileOrderManagement: React.FC = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [advancedFilters, setAdvancedFilters] = useState<any>(null);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   // Helper function to get status text
   const getStatusText = (status: string) => {
@@ -301,7 +307,14 @@ const ProfileOrderManagement: React.FC = () => {
   };
 
   const handleViewDetails = (orderId: string) => {
-    window.open(`/order-success?orderId=${orderId}`, '_blank');
+    const order = orders.find(o => o.id === orderId);
+    if (order) {
+      setSelectedOrder(order);
+    }
+  };
+
+  const handleBackToOrders = () => {
+    setSelectedOrder(null);
   };
 
   const handleReorder = async (orderId: string) => {
@@ -338,6 +351,17 @@ const ProfileOrderManagement: React.FC = () => {
     }
   };
 
+  // If an order is selected, show order detail view
+  if (selectedOrder) {
+    return (
+      <OrderDetailView
+        order={selectedOrder}
+        onBack={handleBackToOrders}
+      />
+    );
+  }
+
+  // Otherwise show order management
   return (
     <div className="bg-white rounded-lg shadow-sm border">
       <div className="p-6 border-b">
@@ -448,10 +472,9 @@ const Profile: React.FC = () => {
         return (
           <div className="bg-white rounded-lg shadow-sm border p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Thông báo của tôi</h2>
-            <p className="text-gray-600">Chức năng thông báo đang được phát triển...</p>
+            <p className="text-gray-600">Chưa có thông báo nào.</p>
           </div>
         );
-      case 'account':
       default:
         return <AccountInfo />;
     }

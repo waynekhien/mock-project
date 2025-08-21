@@ -7,6 +7,7 @@ interface OrderForm {
   userId: string;
   userName: string;
   userEmail: string;
+  userPhone?: string;
   totalAmount: number;
   status: 'pending' | 'confirmed' | 'shipping' | 'delivered' | 'cancelled';
   paymentMethod: 'cash' | 'card' | 'bank_transfer';
@@ -24,6 +25,7 @@ export const useOrderManagement = () => {
     userId: "",
     userName: "",
     userEmail: "",
+    userPhone: "",
     totalAmount: 0,
     status: "pending",
     paymentMethod: "cash",
@@ -86,6 +88,7 @@ export const useOrderManagement = () => {
         userId: orderToEdit.userId,
         userName: orderToEdit.userName,
         userEmail: orderToEdit.userEmail,
+        userPhone: orderToEdit.userPhone,
         totalAmount: orderToEdit.totalAmount,
         status: orderToEdit.status,
         paymentMethod: orderToEdit.paymentMethod,
@@ -113,6 +116,7 @@ export const useOrderManagement = () => {
       userId: "",
       userName: "",
       userEmail: "",
+      userPhone: "",
       totalAmount: 0,
       status: "pending",
       paymentMethod: "cash",

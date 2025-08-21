@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { MapPin, Edit3 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { usersApi } from '../../services/api';
+
 
 interface Address {
   id: string;

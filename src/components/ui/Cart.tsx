@@ -18,11 +18,11 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
     }).format(price);
   };
 
-  const handleQuantityUpdate = (id: number, newQuantity: number) => {
+  const handleQuantityUpdate = (id: string, newQuantity: number) => {
     updateQuantity(id, newQuantity);
   };
 
-  const handleRemoveItem = (id: number) => {
+  const handleRemoveItem = (id: string) => {
     removeFromCart(id);
   };
 
