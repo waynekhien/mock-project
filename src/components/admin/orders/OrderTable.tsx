@@ -16,13 +16,13 @@ const OrderTable: React.FC<OrderTableProps> = ({
   onDetail,
 }) => {
   const columns = [
-    { key: "id", label: "ID" },
-    { key: "userName", label: "Tên khách hàng" },
-    { key: "userEmail", label: "Email" },
-    { key: "totalAmount", label: "Tổng tiền" },
-    { key: "status", label: "Trạng thái" },
-    { key: "paymentStatus", label: "Thanh toán" },
-    { key: "createdAt", label: "Ngày tạo" },
+    { key: "id", label: "ID", sortable: true, width: "w-32" },
+    { key: "userName", label: "Tên khách hàng", sortable: true },
+    { key: "userEmail", label: "Email", sortable: true },
+    { key: "totalAmount", label: "Tổng tiền", sortable: true },
+    { key: "status", label: "Trạng thái", sortable: true },
+    { key: "paymentStatus", label: "Thanh toán", sortable: true },
+    { key: "createdAt", label: "Ngày tạo", sortable: true },
   ];
 
   // Format data for AdminTable
@@ -73,6 +73,9 @@ const OrderTable: React.FC<OrderTableProps> = ({
       onEdit={onEdit}
       onDelete={onDelete}
       onDetail={onDetail}
+      title="Quản lý đơn hàng"
+      searchPlaceholder="Tìm kiếm đơn hàng..."
+      itemsPerPage={10}
     />
   );
 };

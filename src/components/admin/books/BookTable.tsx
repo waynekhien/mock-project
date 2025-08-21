@@ -16,22 +16,22 @@ const BookTable: React.FC<BookTableProps> = ({
   onDetail,
 }) => {
   const columns = [
-    { key: "image", label: "Ảnh" },
-    { key: "id", label: "ID" },
-    { key: "name", label: "Tên sách" },
+    { key: "image", label: "Ảnh", width: "w-20" },
+    { key: "id", label: "ID", sortable: true, width: "w-24" },
+    { key: "name", label: "Tên sách", sortable: true },
     { key: "categories", label: "Danh mục" },
-    { key: "list_price", label: "Giá bán" },
-    { key: "original_price", label: "Giá gốc" },
-    { key: "rating_average", label: "Đánh giá" },
+    { key: "list_price", label: "Giá bán", sortable: true },
+    { key: "original_price", label: "Giá gốc", sortable: true },
+    { key: "rating_average", label: "Đánh giá", sortable: true },
   ];
 
   // Format data for AdminTable
   const formattedBooks = books.map(book => {
-    // Get the first image from images array or book_cover
-    const imageUrl = book.images && book.images.length > 0 
-      ? book.images[0].base_url || book.images[0].thumbnail_url 
-      : book.book_cover;
-    
+    // Get base_url from first image only
+    const imageUrl = book.images && book.images.length > 0 && book.images[0].base_url
+      ? book.images[0].base_url
+      : null;
+
     return {
       id: book.id,
       image: imageUrl,
@@ -58,6 +58,9 @@ const BookTable: React.FC<BookTableProps> = ({
       onEdit={onEdit}
       onDelete={onDelete}
       onDetail={onDetail}
+      title="Quản lý sách"
+      searchPlaceholder="Tìm kiếm sách..."
+      itemsPerPage={8}
     />
   );
 };

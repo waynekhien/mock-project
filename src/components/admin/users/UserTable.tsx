@@ -16,12 +16,12 @@ const UserTable: React.FC<UserTableProps> = ({
   onDetail,
 }) => {
   const columns = [
-    { key: "id", label: "ID" },
-    { key: "name", label: "Họ và tên" },
-    { key: "email", label: "Email" },
+    { key: "id", label: "ID", sortable: true, width: "w-24" },
+    { key: "name", label: "Họ và tên", sortable: true },
+    { key: "email", label: "Email", sortable: true },
     { key: "phone", label: "Số điện thoại" },
-    { key: "role", label: "Vai trò" },
-    { key: "createdAt", label: "Ngày tạo" },
+    { key: "role", label: "Vai trò", sortable: true },
+    { key: "createdAt", label: "Ngày tạo", sortable: true },
   ];
 
   // Format data for AdminTable
@@ -59,6 +59,9 @@ const UserTable: React.FC<UserTableProps> = ({
       onEdit={onEdit}
       onDelete={onDelete}
       onDetail={onDetail}
+      title="Quản lý người dùng"
+      searchPlaceholder="Tìm kiếm người dùng..."
+      itemsPerPage={10}
     />
   );
 };

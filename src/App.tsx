@@ -1,7 +1,13 @@
 
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Home, ProductDetail, CartPage, Checkout, OrderSuccess, Profile, Dashboard, ProductManagement, UserManagement, OrderManagement } from './pages';
+import { Home, ProductDetail, CartPage, Checkout, OrderSuccess, Profile } from './pages';
+
+// Lazy load admin components
+const Dashboard = lazy(() => import('./pages/admin/Dashboard'));
+const ProductManagement = lazy(() => import('./pages/admin/ProductManagement'));
+const UserManagement = lazy(() => import('./pages/admin/UserManagement'));
+const OrderManagement = lazy(() => import('./pages/admin/OrderManagement'));
 import { AdminLayout } from './components/layout';
 import { ProtectedRoute } from './components/auth';
 import { CartProvider } from './contexts/CartContext';
@@ -69,10 +75,34 @@ const AppRoutes: React.FC = () => {
               }
             >
               <Route index element={<Navigate to="/admin/dashboard" replace />} />
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="products" element={<ProductManagement />} />
-              <Route path="users" element={<UserManagement />} />
-              <Route path="orders" element={<OrderManagement />} />
+              <Route path="dashboard" element={
+                <Suspense fallback={<div className="flex items-center justify-center h-64">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                </div>}>
+                  <Dashboard />
+                </Suspense>
+              } />
+              <Route path="products" element={
+                <Suspense fallback={<div className="flex items-center justify-center h-64">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                </div>}>
+                  <ProductManagement />
+                </Suspense>
+              } />
+              <Route path="users" element={
+                <Suspense fallback={<div className="flex items-center justify-center h-64">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                </div>}>
+                  <UserManagement />
+                </Suspense>
+              } />
+              <Route path="orders" element={
+                <Suspense fallback={<div className="flex items-center justify-center h-64">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                </div>}>
+                  <OrderManagement />
+                </Suspense>
+              } />
             </Route>
           </Routes>
   );

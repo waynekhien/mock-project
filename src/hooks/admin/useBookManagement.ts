@@ -11,6 +11,7 @@ interface BookForm {
   original_price: number;
   book_cover: string | null;
   rating_average: number;
+  images?: Array<{ base_url: string }>;
 }
 
 export const useBookManagement = () => {
@@ -57,26 +58,61 @@ export const useBookManagement = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setCurrentBook((prev) => ({ ...prev, [name]: value }));
+
+    if (name === 'book_cover') {
+      // Update images array with base_url
+      setCurrentBook((prev) => ({
+        ...prev,
+        images: value ? [{ base_url: value }] : []
+      }));
+    } else {
+      setCurrentBook((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleAddOrUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      // Transform currentBook to API format
+      const bookData = {
+        ...currentBook,
+        // Convert simple images array to full BookImage format
+        images: currentBook.images && currentBook.images.length > 0
+          ? currentBook.images.map(img => ({
+              base_url: img.base_url,
+              is_gallery: false,
+              label: "",
+              large_url: img.base_url,
+              medium_url: img.base_url,
+              position: 1,
+              small_url: img.base_url,
+              thumbnail_url: img.base_url
+            }))
+          : []
+      };
+
       if (isEditing && currentBook.id) {
         // Update book
         const updatedBook = await updateBook(
           currentBook.id,
-          currentBook
+          bookData
         );
         setBooks(
           books.map((b) => (b.id === updatedBook.id ? updatedBook : b))
         );
       } else {
-        // Add new book
-        const newBook = await createBook(
-          currentBook as Omit<Book, "id">
-        );
+        // Add new book with auto-generated ID
+        const maxId = books.length > 0
+          ? Math.max(...books.map(book => parseInt(book.id)))
+          : 0;
+        const newId = (maxId + 1).toString();
+
+        const bookWithId = {
+          ...bookData,
+          id: newId
+        };
+
+        const newBook = await createBook(bookWithId as Book);
         setBooks([...books, newBook]);
       }
       resetForm();
@@ -122,6 +158,7 @@ export const useBookManagement = () => {
       original_price: 0,
       book_cover: null,
       rating_average: 0,
+      images: [],
     });
     setIsEditing(false);
   };
