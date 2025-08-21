@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   BadgeCheck,
@@ -43,6 +43,8 @@ export default function Home() {
   const [searchParams] = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [sortBy, setSortBy] = useState<string>('popular');
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
 
   // Get search query from URL
   useEffect(() => {
@@ -67,6 +69,16 @@ export default function Home() {
     console.log('Selected category:', category);
     setSelectedCategory(category);
   };
+
+  const handleSortChange = useCallback((newSortBy: string) => {
+    console.log('Sort changed to:', newSortBy);
+    setSortBy(newSortBy);
+  }, []);
+
+  const handleFiltersChange = useCallback((filters: string[]) => {
+    console.log('Active filters:', filters);
+    setActiveFilters(filters);
+  }, []);
   return (
     <div className="min-h-screen bg-white text-slate-800">
       <Header />
@@ -121,13 +133,18 @@ export default function Home() {
 
             {/* Product Filter - ô riêng biệt */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-300">
-              <ProductFilter />
+              <ProductFilter
+                onSortChange={handleSortChange}
+                onFiltersChange={handleFiltersChange}
+              />
             </div>
 
             {/* Product List - riêng biệt, không có border */}
             <ProductList
               selectedCategory={selectedCategory}
               searchQuery={searchQuery}
+              sortBy={sortBy}
+              activeFilters={activeFilters}
               onBookClick={handleBookClick}
             />
           </div>

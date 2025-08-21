@@ -8,6 +8,8 @@ export interface ProductListProps {
   className?: string;
   selectedCategory?: Category | null;
   searchQuery?: string;
+  sortBy?: string;
+  activeFilters?: string[];
   onBookClick?: (book: Book) => void;
 }
 
@@ -15,6 +17,8 @@ const ProductList: React.FC<ProductListProps> = ({
   className = '',
   selectedCategory,
   searchQuery,
+  sortBy = 'popular',
+  activeFilters = [],
   onBookClick
 }) => {
   const [books, setBooks] = useState<Book[]>([]);
@@ -23,6 +27,100 @@ const ProductList: React.FC<ProductListProps> = ({
   const [currentPage, setCurrentPage] = useState<number>(1);
   
   const ITEMS_PER_PAGE = 20;
+
+  // Apply filters function
+  const applyFilters = (books: Book[], filters: string[]): Book[] => {
+    if (filters.length === 0) return books;
+
+    return books.filter(book => {
+      // Check each active filter
+      for (const filter of filters) {
+        switch (filter) {
+          case 'fast-delivery':
+            // Assume books with fast delivery have a specific property or seller
+            // For demo, we'll check if current_seller exists (indicating fast delivery)
+            if (!book.current_seller) return false;
+            break;
+
+          case 'top-deal':
+            // Check if book has significant discount
+            const originalPrice = book.list_price || 0;
+            const currentPrice = book.current_seller?.price || originalPrice;
+            const discount = ((originalPrice - currentPrice) / originalPrice) * 100;
+            if (discount < 20) return false; // At least 20% discount for top deal
+            break;
+
+          case 'freeship':
+            // Assume freeship is available for books above certain price or from certain sellers
+            const price = book.current_seller?.price || book.list_price || 0;
+            if (price < 150000) return false; // Freeship for orders above 150k
+            break;
+
+          case 'high-rating':
+            // Filter books with rating >= 4 stars
+            const rating = book.rating_average || 0;
+            if (rating < 4) return false;
+            break;
+
+          default:
+            break;
+        }
+      }
+      return true; // Book passes all active filters
+    });
+  };
+
+  // Sort books function
+  const sortBooks = (books: Book[], sortBy: string): Book[] => {
+    const sortedBooks = [...books];
+
+    switch (sortBy) {
+      case 'price-asc':
+        return sortedBooks.sort((a, b) => {
+          const priceA = a.current_seller?.price || a.list_price || 0;
+          const priceB = b.current_seller?.price || b.list_price || 0;
+          return priceA - priceB;
+        });
+
+      case 'price-desc':
+        return sortedBooks.sort((a, b) => {
+          const priceA = a.current_seller?.price || a.list_price || 0;
+          const priceB = b.current_seller?.price || b.list_price || 0;
+          return priceB - priceA;
+        });
+
+      case 'newest':
+        return sortedBooks.sort((a, b) => {
+          // Use id as proxy for creation time (higher id = newer)
+          const idA = parseInt(a.id.toString()) || 0;
+          const idB = parseInt(b.id.toString()) || 0;
+          return idB - idA;
+        });
+
+      case 'best-seller':
+        return sortedBooks.sort((a, b) => {
+          const soldA = a.quantity_sold?.value || 0;
+          const soldB = b.quantity_sold?.value || 0;
+          return soldB - soldA;
+        });
+
+      case 'rating':
+        return sortedBooks.sort((a, b) => {
+          const ratingA = a.rating_average || 0;
+          const ratingB = b.rating_average || 0;
+          return ratingB - ratingA;
+        });
+
+      case 'popular':
+      default:
+        // Keep original order or sort by a combination of factors
+        return sortedBooks.sort((a, b) => {
+          const scoreA = (a.rating_average || 0) * 0.3 + (a.quantity_sold?.value || 0) * 0.7;
+          const scoreB = (b.rating_average || 0) * 0.3 + (b.quantity_sold?.value || 0) * 0.7;
+          return scoreB - scoreA;
+        });
+    }
+  };
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -57,7 +155,12 @@ const ProductList: React.FC<ProductListProps> = ({
           });
         }
 
-        setBooks(filteredBooks);
+        // Apply filters
+        const filteredByFilters = applyFilters(filteredBooks, activeFilters);
+
+        // Apply sorting
+        const sortedBooks = sortBooks(filteredByFilters, sortBy);
+        setBooks(sortedBooks);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch books');
         console.error('Error fetching books:', err);
@@ -67,8 +170,8 @@ const ProductList: React.FC<ProductListProps> = ({
     };
 
     fetchBooks();
-    setCurrentPage(1); // Reset về trang 1 khi category hoặc search thay đổi
-  }, [selectedCategory, searchQuery]);
+    setCurrentPage(1); // Reset về trang 1 khi filters thay đổi
+  }, [selectedCategory, searchQuery, sortBy, activeFilters]);
 
   const handleRetry = () => {
     setError(null);

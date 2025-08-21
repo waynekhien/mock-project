@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Star } from 'lucide-react';
 
 interface FilterOption {
@@ -13,37 +13,54 @@ interface SortOption {
   label: string;
 }
 
-const ProductFilter: React.FC = () => {
-  const [filters, setFilters] = useState<FilterOption[]>([
-    { 
-      id: 'fast-delivery', 
-      label: 'Giao siêu tốc 2H', 
-      icon: 'https://salt.tikicdn.com/ts/tka/a8/31/b6/802e2c99dcce64c67aa2648edb15dd25.png', 
-      active: false 
-    },
-    { 
-      id: 'top-deal', 
-      label: 'Top Deal', 
-      icon: 'https://salt.tikicdn.com/ts/upload/f8/77/0b/0923990ed377f50c3796f9e6ce0dddde.png', 
-      active: false 
-    },
+interface ProductFilterProps {
+  onSortChange?: (sortBy: string) => void;
+  onFiltersChange?: (activeFilters: string[]) => void;
+}
 
-    { 
-      id: 'freeship', 
-      label: 'Freeship Xtra', 
-      icon: 'https://salt.tikicdn.com/ts/upload/a7/18/8c/910f3a83b017b7ced73e80c7ed4154b0.png', 
-      active: false 
+const ProductFilter: React.FC<ProductFilterProps> = ({
+  onSortChange,
+  onFiltersChange
+}) => {
+  const [filters, setFilters] = useState<FilterOption[]>([
+    {
+      id: 'fast-delivery',
+      label: 'Giao siêu tốc 2H',
+      icon: 'https://salt.tikicdn.com/ts/tka/a8/31/b6/802e2c99dcce64c67aa2648edb15dd25.png',
+      active: false
     },
-    { 
-      id: 'high-rating', 
-      label: 'từ 4 sao', 
-      icon: 'star', 
-      active: false 
+    {
+      id: 'top-deal',
+      label: 'Top Deal',
+      icon: 'https://salt.tikicdn.com/ts/upload/f8/77/0b/0923990ed377f50c3796f9e6ce0dddde.png',
+      active: false
+    },
+    {
+      id: 'freeship',
+      label: 'Freeship Xtra',
+      icon: 'https://salt.tikicdn.com/ts/upload/a7/18/8c/910f3a83b017b7ced73e80c7ed4154b0.png',
+      active: false
+    },
+    {
+      id: 'high-rating',
+      label: 'từ 4 sao',
+      icon: 'star',
+      active: false
     }
   ]);
 
   const [sortBy, setSortBy] = useState('popular');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  // Initial notification on mount (if needed)
+  useEffect(() => {
+    const activeFilters = filters.filter(f => f.active).map(f => f.id);
+    if (onFiltersChange && activeFilters.length === 0) {
+      // Only notify on initial mount if no filters are active
+      console.log('ProductFilter: Initial mount, no active filters');
+      onFiltersChange(activeFilters);
+    }
+  }, []); // Only run on mount
 
   const sortOptions: SortOption[] = [
     { value: 'popular', label: 'Phổ biến' },
@@ -55,22 +72,40 @@ const ProductFilter: React.FC = () => {
   ];
 
   const toggleFilter = (filterId: string) => {
-    setFilters(prev => 
-      prev.map(filter => 
-        filter.id === filterId 
+    setFilters(prev => {
+      const newFilters = prev.map(filter =>
+        filter.id === filterId
           ? { ...filter, active: !filter.active }
           : filter
-      )
-    );
+      );
+
+      // Immediately notify parent of change
+      if (onFiltersChange) {
+        const activeFilters = newFilters.filter(f => f.active).map(f => f.id);
+        console.log('toggleFilter: Active filters:', activeFilters);
+        onFiltersChange(activeFilters);
+      }
+
+      return newFilters;
+    });
   };
 
   const handleSortChange = (value: string) => {
     setSortBy(value);
     setIsDropdownOpen(false);
+    if (onSortChange) {
+      onSortChange(value);
+    }
   };
 
   const clearAllFilters = () => {
     setFilters(prev => prev.map(filter => ({ ...filter, active: false })));
+
+    // Notify parent that all filters are cleared
+    if (onFiltersChange) {
+      console.log('clearAllFilters: Clearing all filters');
+      onFiltersChange([]);
+    }
   };
 
   const activeFiltersCount = filters.filter(f => f.active).length;
