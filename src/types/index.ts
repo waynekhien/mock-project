@@ -63,13 +63,13 @@ export interface Book {
   authors?: Author[];
   book_cover: string | null;
   categories: Category;
-  current_seller: Seller;
+  current_seller?: Seller;
   description: string;
   images: BookImage[];
   list_price: number;
   original_price: number;
   quantity_sold: QuantitySold;
-  rating_average: number;
+  rating_average: number | string;
   short_description: string;
   specifications: Specification[];
 }
@@ -87,7 +87,7 @@ export interface User {
   email: string;
   phone?: string;
   address?: string;
-  role: 'admin' | 'customer';
+  role: 'admin' | 'user';
   createdAt: string;
   updatedAt?: string;
   // Extended profile fields

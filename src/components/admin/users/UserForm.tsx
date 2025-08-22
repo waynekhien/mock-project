@@ -2,11 +2,12 @@ import React from 'react';
 
 interface UserForm {
   id?: string;
-  name: string;
-  email: string;
+  name?: string;
+  email?: string;
+  password?: string;
   phone?: string;
   address?: string;
-  role: 'admin' | 'customer';
+  role?: 'admin' | 'user';
 }
 
 interface UserFormProps {
@@ -39,7 +40,7 @@ const UserFormComponent: React.FC<UserFormProps> = ({
               type="text"
               name="name"
               placeholder="Nhập họ và tên"
-              value={user.name}
+              value={user.name || ""}
               onChange={onChange}
               className="w-full p-2 border rounded-md"
               required
@@ -54,7 +55,7 @@ const UserFormComponent: React.FC<UserFormProps> = ({
               type="email"
               name="email"
               placeholder="user@example.com"
-              value={user.email}
+              value={user.email || ""}
               onChange={onChange}
               className="w-full p-2 border rounded-md"
               required
@@ -63,6 +64,24 @@ const UserFormComponent: React.FC<UserFormProps> = ({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Mật khẩu {!isEditing && <span className="text-red-500">*</span>}
+            </label>
+            <input
+              type="password"
+              name="password"
+              placeholder={isEditing ? "Để trống nếu không thay đổi" : "Nhập mật khẩu"}
+              value={user.password || ""}
+              onChange={onChange}
+              className="w-full p-2 border rounded-md"
+              required={!isEditing}
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              {isEditing ? "Chỉ nhập nếu muốn thay đổi mật khẩu" : "Mật khẩu cho tài khoản"}
+            </p>
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Số điện thoại
@@ -84,12 +103,12 @@ const UserFormComponent: React.FC<UserFormProps> = ({
             </label>
             <select
               name="role"
-              value={user.role}
+              value={user.role || "user"}
               onChange={onChange}
               className="w-full p-2 border rounded-md"
               required
             >
-              <option value="customer">Khách hàng</option>
+              <option value="user">Người dùng</option>
               <option value="admin">Quản trị viên</option>
             </select>
             <p className="text-xs text-gray-500 mt-1">Quyền hạn trong hệ thống</p>

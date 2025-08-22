@@ -158,8 +158,8 @@ const BookDetailModal: React.FC<BookDetailModalProps> = ({
                 <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <span className="text-gray-600">Đánh giá:</span>
                   <div className="flex items-center gap-2">
-                    <div className="flex">{renderStars(book.rating_average || 0)}</div>
-                    <span className="text-sm font-medium">({book.rating_average || 0})</span>
+                    <div className="flex">{renderStars(Number(book.rating_average || 0))}</div>
+                    <span className="text-sm font-medium">({Number(book.rating_average || 0)})</span>
                   </div>
                 </div>
               </div>

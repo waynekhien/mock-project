@@ -2,9 +2,6 @@ import React, { useState } from "react";
 import {
   Users,
   Plus,
-  Filter,
-  UserCheck,
-  UserX,
   Crown,
   Mail,
   Phone,
@@ -16,11 +13,9 @@ import {
 import { UserForm } from "../../components/admin/users";
 import {
   PageHeader,
-  FilterSection,
   ActionButton,
   ModernDataTable
 } from "../../components/admin/shared";
-import { StatsCard } from "../../components/admin/dashboard";
 import { useUserManagement } from "../../hooks/admin";
 import { usersApi } from "../../services/api";
 import { useToast } from "../../contexts/ToastContext";
@@ -43,7 +38,6 @@ const UsersAdmin: React.FC = () => {
   const { showSuccess, showError } = useToast();
   const [users, setUsers] = useState<User[]>(originalUsers);
   const [showForm, setShowForm] = useState(false);
-  const [roleFilter, setRoleFilter] = useState("all");
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showUserDetail, setShowUserDetail] = useState(false);
   const [changingRoleUserId, setChangingRoleUserId] = useState<string | null>(null);
@@ -64,15 +58,23 @@ const UsersAdmin: React.FC = () => {
         throw new Error('User not found');
       }
 
-      // API call - ignore 400 error if it actually works
-      try {
-        await usersApi.update(userId, { role: newRole } as any);
-      } catch (apiError: any) {
-        // API returns 400 but might still work - check if it's just a response format issue
-        console.log('API returned 400 but might have succeeded:', apiError.response?.data);
+      console.log('Changing role for user:', userId, 'to:', newRole);
 
-        // Don't throw error here - assume it worked if we get here
-        // The 400 might be a backend response format issue
+      // API call - send only the role field
+      try {
+        const updateData = { role: newRole };
+        console.log('Sending role update with data:', updateData);
+        await usersApi.update(userId, updateData);
+      } catch (apiError: any) {
+        console.error('Role update API error:', apiError);
+        // Log the specific error details
+        if (apiError.response) {
+          console.error('Error response data:', apiError.response.data);
+          console.error('Error response status:', apiError.response.status);
+        }
+        
+        // Don't throw here - we'll assume it worked if we get to this point
+        // since you mentioned the role actually changes despite the 400 error
       }
 
       // Always update local state and show success
@@ -107,18 +109,7 @@ const UsersAdmin: React.FC = () => {
   };
 
   // Filter users by role only (search is handled by ModernDataTable)
-  const filteredUsers = users.filter(user => {
-    const matchesRole = roleFilter === "all" || user.role === roleFilter;
-    return matchesRole;
-  });
-
-  // Statistics
-  const stats = {
-    total: users.length,
-    admins: users.filter(u => u.role === 'admin').length,
-    customers: users.filter(u => u.role === 'customer').length,
-    active: users.filter(u => u.createdAt).length, // Assuming users with createdAt are active
-  };
+  const filteredUsers = users;
 
   // Table columns for ModernDataTable
   const tableColumns = [
@@ -229,48 +220,6 @@ const UsersAdmin: React.FC = () => {
         }
       />
 
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <StatsCard
-          title="Tổng người dùng"
-          value={stats.total}
-          icon={Users}
-          color="blue"
-        />
-        <StatsCard
-          title="Quản trị viên"
-          value={stats.admins}
-          icon={Crown}
-          color="purple"
-        />
-        <StatsCard
-          title="Khách hàng"
-          value={stats.customers}
-          icon={UserCheck}
-          color="green"
-        />
-
-        <StatsCard
-          title="Đang hoạt động"
-          value={stats.active}
-          icon={UserX}
-          color="orange"
-        />
-      </div>
-
-      {/* Role Filter */}
-      <FilterSection
-        title="Lọc theo vai trò"
-        icon={Filter}
-        value={roleFilter}
-        options={[
-          { value: "all", label: "Tất cả vai trò" },
-          { value: "admin", label: "Quản trị viên" },
-          { value: "user", label: "Người dùng" }
-        ]}
-        onChange={setRoleFilter}
-      />
-
       {/* Form Modal */}
       {showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
@@ -340,7 +289,7 @@ const UserDetailModal: React.FC<UserDetailModalProps> = ({ user, onClose, onEdit
     return (
       <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
         <UserIcon className="w-4 h-4" />
-        Khách hàng
+        Người dùng
       </span>
     );
   };

@@ -60,23 +60,19 @@ export default function Home() {
   }, [searchParams]);
 
   const handleBookClick = (book: Book) => {
-    console.log('Selected book:', book);
     // Navigate to product detail page
     navigate(`/product/${book.id}`);
   };
 
   const handleCategorySelect = (category: Category) => {
-    console.log('Selected category:', category);
     setSelectedCategory(category);
   };
 
   const handleSortChange = useCallback((newSortBy: string) => {
-    console.log('Sort changed to:', newSortBy);
     setSortBy(newSortBy);
   }, []);
 
   const handleFiltersChange = useCallback((filters: string[]) => {
-    console.log('Active filters:', filters);
     setActiveFilters(filters);
   }, []);
   return (

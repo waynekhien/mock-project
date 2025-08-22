@@ -30,7 +30,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   };
 
   const getDiscountPercentage = () => {
-    if (book.original_price && book.current_seller.price < book.original_price) {
+    if (book.original_price && book.current_seller?.price && book.current_seller.price < book.original_price) {
       const discount = ((book.original_price - book.current_seller.price) / book.original_price) * 100;
       return Math.round(discount);
     }
@@ -121,7 +121,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                     <div className="flex items-center">
                       <div className="flex items-center" style={{ fontSize: '12px' }}>
                         <div className="relative flex">
-                          {renderStars(book.rating_average || 0)}
+                          {renderStars(Number(book.rating_average || 0))}
                         </div>
                       </div>
                     </div>

@@ -8,7 +8,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Sparkles,
-  TrendingUp
 } from 'lucide-react';
 
 interface NavItem {
@@ -170,30 +169,6 @@ const ModernSidebar: React.FC<ModernSidebarProps> = ({
               })}
             </div>
           </nav>
-
-          {/* Footer */}
-          <div className={`p-4 border-t border-slate-700 ${isCollapsed ? 'px-2' : ''}`}>
-            {!isCollapsed ? (
-              <div className="bg-slate-700 rounded-lg p-4">
-                <div className="flex items-center gap-3 mb-2">
-                  <TrendingUp className="w-4 h-4 text-green-400" />
-                  <span className="text-sm font-medium text-white">Hệ thống</span>
-                </div>
-                <div className="text-xs text-slate-400">
-                  Hoạt động ổn định
-                </div>
-                <div className="mt-2 bg-slate-600 rounded-full h-1.5">
-                  <div className="bg-green-400 h-full rounded-full w-4/5"></div>
-                </div>
-              </div>
-            ) : (
-              <div className="flex justify-center">
-                <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-                  <TrendingUp className="w-4 h-4 text-white" />
-                </div>
-              </div>
-            )}
-          </div>
         </div>
       </aside>
     </>

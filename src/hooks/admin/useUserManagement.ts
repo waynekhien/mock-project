@@ -4,11 +4,12 @@ import type { User } from '../../types';
 
 interface UserForm {
   id?: string;
-  name: string;
-  email: string;
+  name?: string;
+  email?: string;
+  password?: string;
   phone?: string;
   address?: string;
-  role: 'admin' | 'customer';
+  role?: 'admin' | 'user';
 }
 
 export const useUserManagement = () => {
@@ -19,7 +20,8 @@ export const useUserManagement = () => {
   const [currentUser, setCurrentUser] = useState<UserForm>({
     name: "",
     email: "",
-    role: "customer",
+    password: "",
+    role: "user",
   });
 
   // Fetch users on component mount
@@ -48,10 +50,22 @@ export const useUserManagement = () => {
     e.preventDefault();
     try {
       if (isEditing && currentUser.id) {
-        // Update user
+        // Update user - only send fields that are defined and not empty
+        const updateData: any = {};
+        if (currentUser.name && currentUser.name.trim()) updateData.name = currentUser.name;
+        if (currentUser.email && currentUser.email.trim()) updateData.email = currentUser.email;
+        if (currentUser.phone !== undefined) updateData.phone = currentUser.phone; // Allow empty string
+        if (currentUser.address !== undefined) updateData.address = currentUser.address; // Allow empty string
+        if (currentUser.role) updateData.role = currentUser.role;
+
+        // For password, only include if it's provided and not empty
+        if (currentUser.password && currentUser.password.trim()) {
+          updateData.password = currentUser.password;
+        }
+        
         const updatedUser = await updateUser(
           currentUser.id,
-          currentUser
+          updateData
         );
         setUsers(
           users.map((u) => (u.id === updatedUser.id ? updatedUser : u))
@@ -76,6 +90,7 @@ export const useUserManagement = () => {
         id: userToEdit.id,
         name: userToEdit.name,
         email: userToEdit.email,
+        password: "", // Leave empty for editing - user can fill if they want to change
         phone: userToEdit.phone,
         address: userToEdit.address,
         role: userToEdit.role,
@@ -99,7 +114,8 @@ export const useUserManagement = () => {
     setCurrentUser({
       name: "",
       email: "",
-      role: "customer",
+      password: "",
+      role: "user",
     });
     setIsEditing(false);
   };

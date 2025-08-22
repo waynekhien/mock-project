@@ -17,7 +17,7 @@ const ProductBasicInfo: React.FC<ProductBasicInfoProps> = ({
     <div className="bg-white rounded-lg shadow-sm p-6">
       <div className="space-y-4">
         {/* Badge for official/authentic - only show if seller is best store */}
-        {book.current_seller.is_best_store && (
+        {book.current_seller?.is_best_store && (
           <div className="flex flex-wrap gap-2">
             <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-white bg-gradient-to-r from-green-500 to-green-600">
               <Award className="w-3 h-3 mr-1" />
@@ -53,7 +53,7 @@ const ProductBasicInfo: React.FC<ProductBasicInfoProps> = ({
                 <Star
                   key={i}
                   className={`w-4 h-4 ${
-                    i < Math.floor(book.rating_average)
+                    i < Math.floor(Number(book.rating_average || 0))
                       ? 'text-yellow-400 fill-current'
                       : 'text-gray-300'
                   }`}
@@ -61,7 +61,7 @@ const ProductBasicInfo: React.FC<ProductBasicInfoProps> = ({
               ))}
             </div>
             <span className="text-sm font-medium text-gray-900">
-              {book.rating_average.toFixed(1)}
+              {Number(book.rating_average || 0).toFixed(1)}
             </span>
           </div>
           {book.quantity_sold && (
@@ -77,9 +77,9 @@ const ProductBasicInfo: React.FC<ProductBasicInfoProps> = ({
           <div className="space-y-2">
             <div className="flex items-center space-x-3">
               <span className="text-3xl font-bold text-red-600">
-                {formatPrice(book.current_seller.price)}
+                {formatPrice(book.current_seller?.price || book.list_price)}
               </span>
-              {book.original_price && book.current_seller.price < book.original_price && (
+              {book.original_price && book.current_seller?.price && book.current_seller.price < book.original_price && (
                 <>
                   <span className="text-lg text-gray-400 line-through">
                     {formatPrice(book.original_price)}

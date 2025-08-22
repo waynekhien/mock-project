@@ -170,7 +170,7 @@ const AccountInfo: React.FC = () => {
         country: profile.country,
         birthDate: formatBirthDate(profile.birthDate), // Use helper function
         phone: profile.phone,
-        role: user.role as "admin" | "customer"
+        role: user.role as "admin" | "user"
       };
 
       console.log('Saving profile data:', updateData);
@@ -213,7 +213,7 @@ const AccountInfo: React.FC = () => {
         country: profile.country,
         birthDate: formatBirthDate(profile.birthDate),
         phone: tempPhone, // Updated phone
-        role: user.role as "admin" | "customer"
+        role: user.role as "admin" | "user"
       };
       
       const result = await updateUser(user.id.toString(), updateData);
@@ -255,7 +255,7 @@ const AccountInfo: React.FC = () => {
         country: profile.country,
         birthDate: formatBirthDate(profile.birthDate),
         phone: profile.phone,
-        role: user.role as "admin" | "customer"
+        role: user.role as "admin" | "user"
       };
       
       const result = await updateUser(user.id.toString(), updateData);

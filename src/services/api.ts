@@ -229,7 +229,29 @@ export const usersApi = {
   // Update user
   update: async (id: string, user: Partial<User>): Promise<User> => {
     try {
-      const response = await api.put<User>(`/users/${id}`, user);
+      // Get current user data first to preserve all fields
+      const currentUser = await api.get<User>(`/users/${id}`);
+      
+      // Create update object preserving all existing fields
+      const updateData: any = {
+        ...currentUser.data, // Start with all current data
+        // Override with new values only if provided
+        ...(user.name !== undefined && { name: user.name }),
+        ...(user.email !== undefined && { email: user.email }),
+        ...(user.phone !== undefined && { phone: user.phone }),
+        ...(user.address !== undefined && { address: user.address }),
+        ...(user.role !== undefined && { role: user.role })
+      };
+      
+      // Handle password - API requires it, so provide current password or the new one
+      if ((user as any).password) {
+        if ((user as any).password !== 'unchanged' && (user as any).password.trim() !== '') {
+          updateData.password = (user as any).password;
+        }
+        // If password is empty or 'unchanged', keep the existing password from currentUser.data
+      }
+      
+      const response = await api.put<User>(`/users/${id}`, updateData);
       return response.data;
     } catch (error) {
       throw new Error(

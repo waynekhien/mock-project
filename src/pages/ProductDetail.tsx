@@ -72,7 +72,7 @@ const ProductDetail: React.FC = () => {
   };
 
   const getDiscountPercentage = () => {
-    if (book?.original_price && book.current_seller.price < book.original_price) {
+    if (book?.original_price && book?.current_seller?.price && book.current_seller.price < book.original_price) {
       const discount = ((book.original_price - book.current_seller.price) / book.original_price) * 100;
       return Math.round(discount);
     }
@@ -326,13 +326,13 @@ const ProductDetail: React.FC = () => {
           <div className="lg:col-span-3">
             <div className="sticky top-4 space-y-4">
               {/* Seller Information */}
-              <SellerInfo seller={book.current_seller} />
+              {book.current_seller && <SellerInfo seller={book.current_seller} />}
               
               {/* Purchase Section */}
               <PurchaseSection
                 onAddToCart={handleAddToCart}
                 onBuyNow={handleBuyNow}
-                price={book.current_seller.price}
+                price={book.current_seller?.price || book.list_price}
                 formatPrice={formatPrice}
               />
             </div>

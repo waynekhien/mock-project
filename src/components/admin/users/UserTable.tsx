@@ -29,7 +29,8 @@ const UserTable: React.FC<UserTableProps> = ({
     const getRoleBadge = (role: string) => {
       const roleMap = {
         admin: 'admin',
-        customer: 'user'
+        user: 'user',
+        customer: 'user' // Keep for backward compatibility
       };
       return roleMap[role as keyof typeof roleMap] || role;
     };
