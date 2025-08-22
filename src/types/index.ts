@@ -99,6 +99,20 @@ export interface User {
   birthDate?: string;
 }
 
+// User update interface - for updating user profile (excludes password)
+export interface UserUpdateData {
+  email?: string;
+  name?: string;
+  firstName?: string;
+  lastName?: string;
+  nickname?: string;
+  gender?: 'male' | 'female' | 'other';
+  country?: string;
+  birthDate?: string;
+  phone?: string;
+  role?: 'admin' | 'user';
+}
+
 // Product interface (generic product, can be used for books or other items)
 export interface Product {
   id: string;

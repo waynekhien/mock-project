@@ -158,10 +158,9 @@ const AccountInfo: React.FC = () => {
 
     setIsLoading(true);
     try {
-      // Prepare data for API - include ALL profile fields
+      // Prepare data for API - include ALL profile fields (except password)
       const updateData = {
         email: profile.email || user.email, // Use updated email or current email
-        password: user.confirmPassword || 'defaultPassword', // Backend requires password
         name: `${profile.firstName} ${profile.lastName}`.trim(), // Full name for backend
         firstName: profile.firstName,
         lastName: profile.lastName,
@@ -201,10 +200,9 @@ const AccountInfo: React.FC = () => {
     try {
       console.log('Updating phone for user:', user.id, 'with phone:', tempPhone);
       
-      // Include ALL current profile data + new phone
+      // Include ALL current profile data + new phone (except password)
       const updateData = {
         email: profile.email || user.email,
-        password: user.confirmPassword || 'defaultPassword',
         name: `${profile.firstName} ${profile.lastName}`.trim(),
         firstName: profile.firstName,
         lastName: profile.lastName,
@@ -243,10 +241,9 @@ const AccountInfo: React.FC = () => {
     try {
       console.log('Updating email for user:', user.id, 'with email:', tempEmail);
       
-      // Include ALL current profile data + new email
+      // Include ALL current profile data + new email (except password)
       const updateData = {
         email: tempEmail, // Updated email
-        password: user.confirmPassword || 'defaultPassword',
         name: `${profile.firstName} ${profile.lastName}`.trim(),
         firstName: profile.firstName,
         lastName: profile.lastName,

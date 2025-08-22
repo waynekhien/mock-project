@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Category, Book, User, Order, LoginRequest, LoginResponse, CartRequest, CartResponse } from '../types';
+import type { Category, Book, User, Order, LoginRequest, LoginResponse, CartRequest, CartResponse, UserUpdateData } from '../types';
 
 // Create axios instance with base configuration
 const api = axios.create({
@@ -227,19 +227,15 @@ export const usersApi = {
   },
 
   // Update user
-  update: async (id: string, user: Partial<User>): Promise<User> => {
+  update: async (id: string, user: UserUpdateData): Promise<User> => {
     try {
-      // Get current user data first to preserve all fields
-      const currentUser = await api.get<User>(`/users/${id}`);
-      
-      // Create update object preserving all existing fields
+      // Create update object with ONLY the fields we want to update
+      // DO NOT copy all current data to avoid including password
       const updateData: any = {
-        ...currentUser.data, // Start with all current data
-        // Override with new values only if provided
+        // Only include fields that are provided in the update request
         ...(user.name !== undefined && { name: user.name }),
         ...(user.email !== undefined && { email: user.email }),
         ...(user.phone !== undefined && { phone: user.phone }),
-        ...(user.address !== undefined && { address: user.address }),
         ...(user.role !== undefined && { role: user.role }),
         // Add extended fields support
         ...(user.firstName !== undefined && { firstName: user.firstName }),
@@ -252,15 +248,14 @@ export const usersApi = {
         updatedAt: new Date().toISOString()
       };
       
-      // Handle password - API requires it, so provide current password or the new one
-      if ((user as any).password) {
-        if ((user as any).password !== 'unchanged' && (user as any).password.trim() !== '') {
-          updateData.password = (user as any).password;
-        }
-        // If password is empty or 'unchanged', keep the existing password from currentUser.data
-      }
+      // DO NOT include password in update requests to prevent accidental password changes
+      // Password updates should be handled by a separate endpoint
       
-      const response = await api.put<User>(`/users/${id}`, updateData);
+      console.log('API updateUser - Request data (should NOT contain password):', updateData);
+      
+      // Use PATCH instead of PUT to avoid backend auto-generating password
+      const response = await api.patch<User>(`/users/${id}`, updateData);
+      console.log('API updateUser - Response data:', response.data);
       return response.data;
     } catch (error) {
       throw new Error(
@@ -390,9 +385,17 @@ export const authApi = {
   // Login user
   login: async (credentials: LoginRequest): Promise<LoginResponse> => {
     try {
+      console.log('authApi - login attempt with:', credentials);
       const response = await api.post<LoginResponse>('/login', credentials);
+      console.log('authApi - login response:', response.data);
       return response.data;
     } catch (error) {
+      console.error('authApi - login error:', error);
+      if (axios.isAxiosError(error)) {
+        console.error('authApi - error response:', error.response?.data);
+        console.error('authApi - error status:', error.response?.status);
+        console.error('authApi - error headers:', error.response?.headers);
+      }
       throw new Error(
         axios.isAxiosError(error)
           ? error.response?.data?.message || error.message
@@ -424,8 +427,10 @@ export const authApi = {
   // Logout user (optional - clears localStorage)
   logout: async (): Promise<void> => {
     try {
+      console.log('authApi - logout called');
       localStorage.removeItem('accessToken');
       localStorage.removeItem('user');
+      console.log('authApi - localStorage cleared');
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -435,6 +440,7 @@ export const authApi = {
   getCurrentUser: (): LoginResponse['user'] | null => {
     try {
       const user = localStorage.getItem('user');
+      console.log('authApi - getCurrentUser:', user);
       return user ? JSON.parse(user) : null;
     } catch (error) {
       console.error('Error getting current user:', error);
@@ -445,7 +451,9 @@ export const authApi = {
   // Get access token from localStorage
   getAccessToken: (): string | null => {
     try {
-      return localStorage.getItem('accessToken');
+      const token = localStorage.getItem('accessToken');
+      console.log('authApi - getAccessToken:', token);
+      return token;
     } catch (error) {
       console.error('Error getting access token:', error);
       return null;
