@@ -7,7 +7,6 @@ import {
   ShoppingCart,
   ChevronLeft,
   ChevronRight,
-  Sparkles,
 } from 'lucide-react';
 
 interface NavItem {
@@ -56,7 +55,6 @@ const ModernSidebar: React.FC<ModernSidebarProps> = ({
       name: "Quản lý đơn hàng", 
       path: "/admin/orders", 
       icon: <ShoppingCart className="w-5 h-5" />,
-      badge: 3,
       color: "from-orange-500 to-orange-600"
     },
   ];
@@ -77,19 +75,27 @@ const ModernSidebar: React.FC<ModernSidebarProps> = ({
             <div className="flex items-center justify-between">
               {!isCollapsed && (
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                    <Sparkles className="w-6 h-6 text-white" />
+                  <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                    <img 
+                      src="https://salt.tikicdn.com/ts/upload/0e/07/78/ee828743c9afa9792cf20d75995e134e.png" 
+                      alt="Tiki Logo" 
+                      className="w-8 h-8 object-contain"
+                    />
                   </div>
                   <div>
-                    <h1 className="text-xl font-bold text-white">BookStore</h1>
+                    <h1 className="text-xl font-bold text-white">Tiki Admin</h1>
                     <p className="text-xs text-slate-400">Admin Dashboard</p>
                   </div>
                 </div>
               )}
 
               {isCollapsed && (
-                <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center mx-auto">
-                  <Sparkles className="w-6 h-6 text-white" />
+                <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center mx-auto">
+                  <img 
+                    src="https://salt.tikicdn.com/ts/upload/0e/07/78/ee828743c9afa9792cf20d75995e134e.png" 
+                    alt="Tiki Logo" 
+                    className="w-8 h-8 object-contain"
+                  />
                 </div>
               )}
 
@@ -148,12 +154,6 @@ const ModernSidebar: React.FC<ModernSidebarProps> = ({
                     {!isCollapsed && (
                       <div className="flex-1 min-w-0">
                         <span className="font-medium truncate block">{item.name}</span>
-                        {isActive && (
-                          <div className="flex items-center gap-1 mt-1">
-                            <div className="w-1 h-1 bg-blue-400 rounded-full animate-pulse"></div>
-                            <span className="text-xs text-slate-400">Đang xem</span>
-                          </div>
-                        )}
                       </div>
                     )}
 

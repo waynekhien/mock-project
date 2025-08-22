@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  Users,
   Plus,
   Crown,
   Mail,
@@ -12,7 +11,6 @@ import {
 } from "lucide-react";
 import { UserForm } from "../../components/admin/users";
 import {
-  PageHeader,
   ActionButton,
   ModernDataTable
 } from "../../components/admin/shared";
@@ -204,21 +202,19 @@ const UsersAdmin: React.FC = () => {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      <PageHeader
-        title="Quản lý người dùng"
-        description={`Quản lý tài khoản và quyền hạn người dùng (${users.length} người dùng)`}
-        icon={Users}
-        iconColor="blue"
-        actions={
-          <ActionButton
-            onClick={handleAddNew}
-            icon={Plus}
-            variant="primary"
-          >
-            Thêm người dùng
-          </ActionButton>
-        }
-      />
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Quản lý người dùng</h1>
+          <p className="text-gray-600 mt-1">Quản lý tài khoản và quyền hạn người dùng ({users.length} người dùng)</p>
+        </div>
+        <ActionButton
+          onClick={handleAddNew}
+          icon={Plus}
+          variant="primary"
+        >
+          Thêm người dùng
+        </ActionButton>
+      </div>
 
       {/* Form Modal */}
       {showForm && (

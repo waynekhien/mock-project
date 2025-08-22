@@ -126,11 +126,6 @@ const AdminTable: React.FC<AdminTableProps> = ({
               />
             </div>
 
-            {/* Filter button */}
-            <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-              <Filter className="w-4 h-4" />
-              <span className="hidden sm:inline">Lọc</span>
-            </button>
           </div>
         </div>
       </div>
