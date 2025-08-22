@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import ModernSidebar from '../admin/shared/ModernSidebar';
-import ModernHeader from '../admin/shared/ModernHeader';
+import ModernSidebar from '../../admin/components/shared/ModernSidebar';
+import ModernHeader from '../../admin/components/shared/ModernHeader';
 
 const AdminLayout: React.FC = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);

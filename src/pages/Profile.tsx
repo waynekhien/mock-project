@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Header } from '../components/layout';
-import { AccountInfo } from '../components/profile';
+import { AccountInfo } from '../components/user/profile';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
 import { ordersApi } from '../services/api';
 import { User, Bell, Search, Package } from 'lucide-react';
-import OrderTabs from '../components/profile/OrderTabs';
-import OrderSearch from '../components/profile/OrderSearch';
-import OrderList from '../components/profile/OrderList';
-import OrderDetailView from '../components/order/OrderDetailView';
+import OrderTabs from '../components/user/profile/OrderTabs';
+import OrderSearch from '../components/user/profile/OrderSearch';
+import OrderList from '../components/user/profile/OrderList';
+import OrderDetailView from '../components/user/orders/OrderDetailView';
 import type { Order } from '../types';
 
 interface ProfileSidebarProps {

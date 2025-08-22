@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import type { Book, Category } from "../types";
 import { Categories, ProductList, Header, Footer } from "../components";
-import { BannerCarousel, CategoryList, ProductFilter, TopBestSellers } from "../components/features/bookstore";
+import { BannerCarousel, CategoryList, ProductFilter, TopBestSellers } from "../components/user/home";
 
 const commitments = [
   {

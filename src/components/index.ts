@@ -4,8 +4,11 @@ export * from './ui';
 // Layout Components
 export * from './layout';
 
-// Feature Components
-export * from './features';
+// User Components
+export * from './user';
 
-// Admin Components
-export * from './admin';
+// Authentication Components
+export * from './auth';
+
+// Admin components are now in ../admin/components
+// Use direct imports from ../admin for admin-specific functionality

@@ -1,5 +1,5 @@
 import React from 'react';
-import { DeliveryMethod, PaymentMethod, DeliveryAddress, OrderSummary } from '../components/checkout';
+import { DeliveryMethod, PaymentMethod, DeliveryAddress, OrderSummary } from '../components/user/checkout';
 import { DeliveryProvider } from '../contexts/DeliveryContext';
 import { PaymentProvider } from '../contexts/PaymentContext';
 

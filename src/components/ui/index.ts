@@ -18,4 +18,4 @@ export {
   CardContent, 
   CardFooter 
 } from './Card';
-export { default as Cart } from './Cart';
+// Cart component moved to ./user/cart

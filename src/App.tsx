@@ -4,10 +4,10 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Home, ProductDetail, CartPage, Checkout, OrderSuccess, Profile } from './pages';
 
 // Lazy load admin components
-const Dashboard = lazy(() => import('./pages/admin/Dashboard'));
-const ProductManagement = lazy(() => import('./pages/admin/ProductManagement'));
-const UserManagement = lazy(() => import('./pages/admin/UserManagement'));
-const OrderManagement = lazy(() => import('./pages/admin/OrderManagement'));
+const Dashboard = lazy(() => import('./admin/pages/Dashboard'));
+const ProductManagement = lazy(() => import('./admin/pages/ProductManagement'));
+const UserManagement = lazy(() => import('./admin/pages/UserManagement'));
+const OrderManagement = lazy(() => import('./admin/pages/OrderManagement'));
 import { AdminLayout } from './components/layout';
 import { ProtectedRoute } from './components/auth';
 import { CartProvider } from './contexts/CartContext';

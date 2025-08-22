@@ -10,7 +10,7 @@ import {
 import { useCart } from "../../contexts/CartContext";
 import { useAuth } from "../../contexts/AuthContext";
 import { LoginModal } from "../ui/LoginModal";
-import { Search } from "../features";
+import { Search } from "../user/search";
 
 const categories = [
   "điện gia dụng",

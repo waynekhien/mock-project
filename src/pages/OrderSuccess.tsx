@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
-import { OrderSuccessMain, OrderSuccessInfo } from '../components/checkout';
+import { OrderSuccessMain, OrderSuccessInfo } from '../components/user/checkout';
 import { ordersApi } from '../services/api';
 import type { Order } from '../types';
 

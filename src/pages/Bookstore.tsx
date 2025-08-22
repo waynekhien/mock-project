@@ -1,7 +1,7 @@
 import React from 'react';
-import BannerCarousel from '../components/features/bookstore/BannerCarousel';
-import CategoryList from '../components/features/bookstore/CategoryList';
-import ProductFilter from '../components/features/bookstore/ProductFilter';
+import BannerCarousel from '../components/user/home/BannerCarousel';
+import CategoryList from '../components/user/home/CategoryList';
+import ProductFilter from '../components/user/home/ProductFilter';
 
 const Bookstore: React.FC = () => {
   return (

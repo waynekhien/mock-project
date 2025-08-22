@@ -15,23 +15,23 @@ export default defineConfig({
 
           // Admin chunks
           'admin-dashboard': [
-            './src/pages/admin/Dashboard.tsx',
-            './src/components/admin/dashboard/index.ts'
+            './src/admin/pages/Dashboard.tsx',
+            './src/admin/components/dashboard/index.ts'
           ],
           'admin-products': [
-            './src/pages/admin/ProductManagement.tsx',
-            './src/components/admin/books/index.ts'
+            './src/admin/pages/ProductManagement.tsx',
+            './src/admin/components/books/index.ts'
           ],
           'admin-users': [
-            './src/pages/admin/UserManagement.tsx',
-            './src/components/admin/users/index.ts'
+            './src/admin/pages/UserManagement.tsx',
+            './src/admin/components/users/index.ts'
           ],
           'admin-orders': [
-            './src/pages/admin/OrderManagement.tsx',
-            './src/components/admin/orders/index.ts'
+            './src/admin/pages/OrderManagement.tsx',
+            './src/admin/components/orders/index.ts'
           ],
           'admin-shared': [
-            './src/components/admin/shared/index.ts'
+            './src/admin/components/shared/index.ts'
           ]
         }
       }
