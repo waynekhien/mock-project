@@ -12,7 +12,8 @@ import {
   PurchaseSection,
   PurchasePolicy,
   Breadcrumb,
-  RelatedProducts
+  RelatedProducts,
+  TopDeal
 } from '../components';
 import { LoginModal } from '../components/ui/LoginModal';
 import { booksApi } from '../services/api';
@@ -316,6 +317,11 @@ const ProductDetail: React.FC = () => {
                 currentBook={book}
                 onProductClick={(productId: string) => navigate(`/product/${productId}`)}
               />
+            </div>
+
+            {/* Top Deal - Giá Tốt Hôm Nay */}
+            <div className="mt-8">
+              <TopDeal />
             </div>
 
             {/* Purchase Policy */}

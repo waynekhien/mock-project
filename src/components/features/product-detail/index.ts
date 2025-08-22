@@ -8,3 +8,4 @@ export { default as PurchaseSection } from './PurchaseSection';
 export { default as PurchasePolicy } from './PurchasePolicy';
 export { default as SocialActions } from './SocialActions';
 export { default as RelatedProducts } from './RelatedProducts';
+export { default as TopDeal } from './TopDeal';
