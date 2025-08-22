@@ -132,7 +132,7 @@ export const useBookManagement = () => {
         list_price: bookToEdit.list_price,
         original_price: bookToEdit.original_price,
         book_cover: bookToEdit.book_cover,
-        rating_average: bookToEdit.rating_average,
+        rating_average: typeof bookToEdit.rating_average === 'number' ? bookToEdit.rating_average : parseFloat(bookToEdit.rating_average || '0'),
       });
       setIsEditing(true);
     }

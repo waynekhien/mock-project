@@ -58,7 +58,7 @@ const ProductList: React.FC<ProductListProps> = ({
 
           case 'high-rating':
             // Filter books with rating >= 4 stars
-            const rating = book.rating_average || 0;
+            const rating = typeof book.rating_average === 'number' ? book.rating_average : parseFloat(book.rating_average || '0');
             if (rating < 4) return false;
             break;
 
@@ -106,8 +106,8 @@ const ProductList: React.FC<ProductListProps> = ({
 
       case 'rating':
         return sortedBooks.sort((a, b) => {
-          const ratingA = a.rating_average || 0;
-          const ratingB = b.rating_average || 0;
+          const ratingA = typeof a.rating_average === 'number' ? a.rating_average : parseFloat(a.rating_average || '0');
+          const ratingB = typeof b.rating_average === 'number' ? b.rating_average : parseFloat(b.rating_average || '0');
           return ratingB - ratingA;
         });
 
@@ -115,8 +115,10 @@ const ProductList: React.FC<ProductListProps> = ({
       default:
         // Keep original order or sort by a combination of factors
         return sortedBooks.sort((a, b) => {
-          const scoreA = (a.rating_average || 0) * 0.3 + (a.quantity_sold?.value || 0) * 0.7;
-          const scoreB = (b.rating_average || 0) * 0.3 + (b.quantity_sold?.value || 0) * 0.7;
+          const ratingA = typeof a.rating_average === 'number' ? a.rating_average : parseFloat(a.rating_average || '0');
+          const ratingB = typeof b.rating_average === 'number' ? b.rating_average : parseFloat(b.rating_average || '0');
+          const scoreA = ratingA * 0.3 + (a.quantity_sold?.value || 0) * 0.7;
+          const scoreB = ratingB * 0.3 + (b.quantity_sold?.value || 0) * 0.7;
           return scoreB - scoreA;
         });
     }

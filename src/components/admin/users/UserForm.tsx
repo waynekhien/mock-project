@@ -8,6 +8,13 @@ interface UserForm {
   phone?: string;
   address?: string;
   role?: 'admin' | 'user';
+  // Extended fields
+  firstName?: string;
+  lastName?: string;
+  nickname?: string;
+  gender?: 'male' | 'female' | 'other';
+  country?: string;
+  birthDate?: string;
 }
 
 interface UserFormProps {
@@ -63,6 +70,84 @@ const UserFormComponent: React.FC<UserFormProps> = ({
           </div>
         </div>
 
+        {/* Extended name fields */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Họ
+            </label>
+            <input
+              type="text"
+              name="firstName"
+              placeholder="Nhập họ"
+              value={user.firstName || ""}
+              onChange={onChange}
+              className="w-full p-2 border rounded-md"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Tên
+            </label>
+            <input
+              type="text"
+              name="lastName"
+              placeholder="Nhập tên"
+              value={user.lastName || ""}
+              onChange={onChange}
+              className="w-full p-2 border rounded-md"
+            />
+          </div>
+        </div>
+
+        {/* Personal info */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Biệt danh
+            </label>
+            <input
+              type="text"
+              name="nickname"
+              placeholder="Nhập biệt danh"
+              value={user.nickname || ""}
+              onChange={onChange}
+              className="w-full p-2 border rounded-md"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Giới tính
+            </label>
+            <select
+              name="gender"
+              value={user.gender || ""}
+              onChange={onChange}
+              className="w-full p-2 border rounded-md"
+            >
+              <option value="">Chọn giới tính</option>
+              <option value="male">Nam</option>
+              <option value="female">Nữ</option>
+              <option value="other">Khác</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Ngày sinh
+            </label>
+            <input
+              type="date"
+              name="birthDate"
+              value={user.birthDate || ""}
+              onChange={onChange}
+              className="w-full p-2 border rounded-md"
+            />
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -94,25 +179,38 @@ const UserFormComponent: React.FC<UserFormProps> = ({
               onChange={onChange}
               className="w-full p-2 border rounded-md"
             />
-            <p className="text-xs text-gray-500 mt-1">Số điện thoại liên hệ</p>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Vai trò <span className="text-red-500">*</span>
+              Quốc gia
             </label>
-            <select
-              name="role"
-              value={user.role || "user"}
+            <input
+              type="text"
+              name="country"
+              placeholder="Nhập quốc gia"
+              value={user.country || ""}
               onChange={onChange}
               className="w-full p-2 border rounded-md"
-              required
-            >
-              <option value="user">Người dùng</option>
-              <option value="admin">Quản trị viên</option>
-            </select>
-            <p className="text-xs text-gray-500 mt-1">Quyền hạn trong hệ thống</p>
+            />
           </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Vai trò <span className="text-red-500">*</span>
+          </label>
+          <select
+            name="role"
+            value={user.role || "user"}
+            onChange={onChange}
+            className="w-full p-2 border rounded-md"
+            required
+          >
+            <option value="user">Người dùng</option>
+            <option value="admin">Quản trị viên</option>
+          </select>
+          <p className="text-xs text-gray-500 mt-1">Quyền hạn trong hệ thống</p>
         </div>
 
         <div>

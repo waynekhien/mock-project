@@ -10,6 +10,13 @@ interface UserForm {
   phone?: string;
   address?: string;
   role?: 'admin' | 'user';
+  // Extended fields
+  firstName?: string;
+  lastName?: string;
+  nickname?: string;
+  gender?: 'male' | 'female' | 'other';
+  country?: string;
+  birthDate?: string;
 }
 
 export const useUserManagement = () => {
@@ -94,6 +101,13 @@ export const useUserManagement = () => {
         phone: userToEdit.phone,
         address: userToEdit.address,
         role: userToEdit.role,
+        // Extended fields
+        firstName: userToEdit.firstName,
+        lastName: userToEdit.lastName,
+        nickname: userToEdit.nickname,
+        gender: userToEdit.gender,
+        country: userToEdit.country,
+        birthDate: userToEdit.birthDate,
       });
       setIsEditing(true);
     }
@@ -116,6 +130,13 @@ export const useUserManagement = () => {
       email: "",
       password: "",
       role: "user",
+      // Extended fields
+      firstName: "",
+      lastName: "",
+      nickname: "",
+      gender: undefined,
+      country: "",
+      birthDate: "",
     });
     setIsEditing(false);
   };

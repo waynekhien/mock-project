@@ -240,7 +240,16 @@ export const usersApi = {
         ...(user.email !== undefined && { email: user.email }),
         ...(user.phone !== undefined && { phone: user.phone }),
         ...(user.address !== undefined && { address: user.address }),
-        ...(user.role !== undefined && { role: user.role })
+        ...(user.role !== undefined && { role: user.role }),
+        // Add extended fields support
+        ...(user.firstName !== undefined && { firstName: user.firstName }),
+        ...(user.lastName !== undefined && { lastName: user.lastName }),
+        ...(user.nickname !== undefined && { nickname: user.nickname }),
+        ...(user.gender !== undefined && { gender: user.gender }),
+        ...(user.country !== undefined && { country: user.country }),
+        ...(user.birthDate !== undefined && { birthDate: user.birthDate }),
+        // Add updatedAt timestamp
+        updatedAt: new Date().toISOString()
       };
       
       // Handle password - API requires it, so provide current password or the new one

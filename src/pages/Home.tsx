@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import type { Book, Category } from "../types";
 import { Categories, ProductList, Header, Footer } from "../components";
-import { BannerCarousel, CategoryList, ProductFilter } from "../components/features/bookstore";
+import { BannerCarousel, CategoryList, ProductFilter, TopBestSellers } from "../components/features/bookstore";
 
 const commitments = [
   {
@@ -143,6 +143,11 @@ export default function Home() {
               activeFilters={activeFilters}
               onBookClick={handleBookClick}
             />
+            
+            {/* Top Best Sellers */}
+            <div className="mt-8">
+              <TopBestSellers />
+            </div>
           </div>
         </div>
       </div>

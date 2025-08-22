@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from "react";
 import {
   Search,
-  Filter,
   Eye,
   Edit,
   Trash2,
