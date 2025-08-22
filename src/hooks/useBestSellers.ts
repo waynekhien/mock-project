@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { booksApi } from '../services/api';
+import { booksApi, ordersApi } from '../services/api';
 import type { Book } from '../types';
 
 interface BestSellerBook {
@@ -9,6 +9,7 @@ interface BestSellerBook {
   url?: string;
   rank: number;
   sold?: number;
+  rating?: number;
 }
 
 interface UseBestSellersReturn {
@@ -28,26 +29,50 @@ export const useBestSellers = (limit: number = 10): UseBestSellersReturn => {
       setLoading(true);
       setError(null);
       
-      // Fetch all books from API
-      const books: Book[] = await booksApi.getAll();
+      // Fetch all books and orders from API
+      const [books, orders]: [Book[], any[]] = await Promise.all([
+        booksApi.getAll(),
+        ordersApi.getAll()
+      ]);
       
-      // Sort by sold quantity (using quantity_sold.value) and take top N
-      const sortedBooks = books
-        .filter(book => book.quantity_sold && book.quantity_sold.value > 0) // Only books with sales data
-        .sort((a, b) => (b.quantity_sold?.value || 0) - (a.quantity_sold?.value || 0))
+      // Calculate actual sold quantities from orders
+      const bookSales: { [bookId: string]: number } = {};
+      
+      orders.forEach((order: any) => {
+        if (order.items && Array.isArray(order.items)) {
+          order.items.forEach((item: any) => {
+            const productId = item.productId;
+            const quantity = item.quantity || 0;
+            
+            if (productId) {
+              bookSales[productId] = (bookSales[productId] || 0) + quantity;
+            }
+          });
+        }
+      });
+      
+      // Add sales data to books and sort by actual sold quantity
+      const booksWithSales = books
+        .map(book => ({
+          ...book,
+          actualSold: bookSales[book.id] || 0
+        }))
+        .filter(book => book.actualSold > 0) // Only books with actual sales
+        .sort((a, b) => b.actualSold - a.actualSold)
         .slice(0, limit);
       
       // Transform to BestSellerBook format
-      const topBooks: BestSellerBook[] = sortedBooks.map((book, index) => ({
+      const topBooks: BestSellerBook[] = booksWithSales.map((book, index) => ({
         id: book.id,
         title: book.name,
-        price: book.list_price,
-        url: `#/product/${book.id}`, // Internal link to product detail
+        price: book.current_seller?.price || book.list_price, // Use current_seller price first, fallback to list_price
+        url: `/product/${book.id}`,
         rank: index + 1,
-        sold: book.quantity_sold?.value
+        sold: book.actualSold,
+        rating: typeof book.rating_average === 'number' ? book.rating_average : parseFloat(book.rating_average?.toString() || '0')
       }));
 
-      // If we don't have enough books with sales data, fill with regular books
+      // If we don't have enough books with sales data, fill with other books
       if (topBooks.length < limit) {
         const remainingBooks = books
           .filter(book => !topBooks.find(tb => tb.id === book.id))
@@ -55,10 +80,11 @@ export const useBestSellers = (limit: number = 10): UseBestSellersReturn => {
           .map((book, index) => ({
             id: book.id,
             title: book.name,
-            price: book.list_price,
-            url: `#/product/${book.id}`,
+            price: book.current_seller?.price || book.list_price, // Use current_seller price first, fallback to list_price
+            url: `/product/${book.id}`,
             rank: topBooks.length + index + 1,
-            sold: book.quantity_sold?.value || 0
+            sold: bookSales[book.id] || 0,
+            rating: typeof book.rating_average === 'number' ? book.rating_average : parseFloat(book.rating_average?.toString() || '0')
           }));
         
         topBooks.push(...remainingBooks);
@@ -68,92 +94,7 @@ export const useBestSellers = (limit: number = 10): UseBestSellersReturn => {
     } catch (err) {
       console.error('Error fetching best sellers:', err);
       setError('Không thể tải dữ liệu sản phẩm bán chạy');
-      
-      // Fallback to mock data
-      const mockData: BestSellerBook[] = [
-        {
-          id: '1',
-          title: 'Người Ăn Chay',
-          price: 108000,
-          url: '#/product/1',
-          rank: 1,
-          sold: 1500
-        },
-        {
-          id: '2',
-          title: 'Sách - 12 Nguyên tắc cốt lõi hợp tác làm ăn chung, Chia thế nào để khoá rủi ro, minh bạch, bền vững',
-          price: 139000,
-          url: '#/product/2',
-          rank: 2,
-          sold: 1200
-        },
-        {
-          id: '3',
-          title: 'Thuyền',
-          price: 97200,
-          url: '#/product/3',
-          rank: 3,
-          sold: 1100
-        },
-        {
-          id: '4',
-          title: 'Sách - Khoá Học Cấp Tốc Về Tư Bản Và Tiền Bạc - Bài Học Từ Thành Phố Đắt Đỏ Nhất Thế Giới',
-          price: 149000,
-          url: '#/product/4',
-          rank: 4,
-          sold: 950
-        },
-        {
-          id: '5',
-          title: 'Tư duy dã tràng - Tim trí giao tranh',
-          price: 121000,
-          url: '#/product/5',
-          rank: 5,
-          sold: 890
-        },
-        {
-          id: '6',
-          title: 'Nói Chuyện Là Bản Năng, Giữ Miệng Là Tu Dưỡng, Im Lặng Là Trí Tuệ',
-          price: 143400,
-          url: '#/product/6',
-          rank: 6,
-          sold: 780
-        },
-        {
-          id: '7',
-          title: 'Khi Mọi Điều Không Như Ý',
-          price: 79000,
-          url: '#/product/7',
-          rank: 7,
-          sold: 650
-        },
-        {
-          id: '8',
-          title: 'Lên Đỉnh Núi Mở Tiệm Bánh Mì - Triết lí Wazawaza: Những con người hạnh phúc, 2 loại bánh mì, và doanh thu thường niên 300 triệu Yên',
-          price: 86400,
-          url: '#/product/8',
-          rank: 8,
-          sold: 520
-        },
-        {
-          id: '9',
-          title: 'Thế Hệ Lo Âu',
-          price: 157880,
-          url: '#/product/9',
-          rank: 9,
-          sold: 480
-        },
-        {
-          id: '10',
-          title: 'Tư Duy Nhanh Và Chậm (Tái Bản)',
-          price: 201760,
-          url: '#/product/10',
-          rank: 10,
-          sold: 430
-        }
-      ].slice(0, limit);
-      
-      setBestSellers(mockData);
+      setBestSellers([]);
     } finally {
       setLoading(false);
     }

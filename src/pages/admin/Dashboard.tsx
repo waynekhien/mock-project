@@ -152,38 +152,6 @@ const Dashboard: React.FC = () => {
     }
   }
 
-  // Calculate top books based on order items
-  const topBooks = (() => {
-    if (ordersLoading || orders.length === 0) return [];
-    
-    const bookStats: { [key: string]: { name: string; sales: number; revenue: number } } = {};
-    
-    orders.forEach(order => {
-      if (order.items) {
-        order.items.forEach(item => {
-          const bookId = item.productId;
-          if (!bookStats[bookId]) {
-            bookStats[bookId] = {
-              name: item.productName,
-              sales: 0,
-              revenue: 0
-            };
-          }
-          bookStats[bookId].sales += item.quantity;
-          bookStats[bookId].revenue += item.total;
-        });
-      }
-    });
-
-    return Object.values(bookStats)
-      .sort((a, b) => b.sales - a.sales)
-      .slice(0, 4)
-      .map(book => ({
-        ...book,
-        rating: 4.5 + Math.random() * 0.5 // Mock rating for now
-      }));
-  })();
-
   return (
     <div className="p-6 space-y-6 min-h-screen bg-gray-50">
       {/* Header */}
@@ -230,7 +198,7 @@ const Dashboard: React.FC = () => {
         {/* Right Column */}
         <div className="space-y-6">
           {/* Top Books */}
-          <TopBooks books={topBooks} />
+          <TopBooks />
         </div>
       </div>
     </div>
