@@ -32,13 +32,17 @@ interface ToastProviderProps {
 
 export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
   const [toasts, setToasts] = useState<ToastData[]>([]);
+  const [counter, setCounter] = useState(0);
 
   const showToast = (
     message: string, 
     type: 'success' | 'error' | 'warning' | 'info' = 'info',
     duration: number = 3000
   ) => {
-    const id = Date.now().toString();
+    // Create unique ID using timestamp + counter to avoid duplicates
+    const id = `${Date.now()}-${counter}`;
+    setCounter(prev => prev + 1);
+    
     const newToast: ToastData = { id, message, type, duration };
     
     setToasts(prev => [...prev, newToast]);

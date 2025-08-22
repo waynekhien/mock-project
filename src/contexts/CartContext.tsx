@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { useToast } from './ToastContext';
-import { cartsApi } from '../services/api';
+import { cartApi } from '../services/api';
 
 // Interface cho CartItem - thông tin đầy đủ của sản phẩm trong giỏ hàng
 export interface CartItem {
@@ -143,7 +143,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     setLoading(true);
     try {
-      const response = await cartsApi.getAll(user.id.toString());
+      const response = await cartApi.getAll(user.id.toString());
 
       if (Array.isArray(response)) {
         const cartItems = response.map(item => convertApiToCartItem(item));
@@ -190,7 +190,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           addedAt: new Date().toISOString()
         };
 
-        const newItem = await cartsApi.add(cartData);
+        const newItem = await cartApi.add(cartData);
 
         // Lưu backup vào localStorage
         const completeItem: CartItem = {
@@ -227,7 +227,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       // Gọi API để sync với server
-      await cartsApi.remove(id);
+      await cartApi.remove(id);
     } catch (error) {
       console.error('❌ Error removing from cart:', error);
       
@@ -283,7 +283,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         addedAt: currentItem.addedAt
       };
       
-      await cartsApi.update(id, fullUpdateData);
+      await cartApi.update(id, fullUpdateData);
     } catch (error) {
       console.error('❌ Error updating quantity:', error);
       
@@ -302,7 +302,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(true);
     try {
       // Xóa từng item
-      const deletePromises = items.map(item => cartsApi.remove(item.id));
+      const deletePromises = items.map(item => cartApi.remove(item.id));
       await Promise.all(deletePromises);
 
       // Xóa backup
