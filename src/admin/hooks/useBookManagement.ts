@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { booksApi, createBook, updateBook, deleteBook } from '../../services/api';
 import type { Book } from '../../types';
 
-interface BookForm {
+// Dedicated interface for form editing - ensures required fields for form management
+interface BookFormData {
   id?: string;
   name: string;
   description: string;
@@ -11,7 +12,25 @@ interface BookForm {
   original_price: number;
   book_cover: string | null;
   rating_average: number;
-  images?: Array<{ base_url: string }>;
+  images: Array<{ base_url: string }>;
+  authors: Array<{
+    id: number;
+    name: string;
+    slug: string;
+  }>;
+  categories: {
+    id: number;
+    name: string;
+    is_leaf?: boolean;
+  };
+  specifications: Array<{
+    name: string;
+    attributes: Array<{
+      code: string;
+      name: string;
+      value: string;
+    }>;
+  }>;
 }
 
 export const useBookManagement = () => {
@@ -19,7 +38,7 @@ export const useBookManagement = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [currentBook, setCurrentBook] = useState<BookForm>({
+  const [currentBook, setCurrentBook] = useState<BookFormData>({
     name: "",
     description: "",
     short_description: "",
@@ -27,18 +46,50 @@ export const useBookManagement = () => {
     original_price: 0,
     book_cover: null,
     rating_average: 0,
+    images: [],
+    authors: [],
+    categories: { id: Date.now(), name: "", is_leaf: true },
+    specifications: []
   });
+
+  // Helper function to find or create category
+  const findOrCreateCategory = (categoryName: string) => {
+    if (!categoryName.trim()) {
+      return { id: Date.now(), name: "", is_leaf: true };
+    }
+
+    // Look for existing category with same name (case-insensitive)
+    const existingBook = books.find(book => 
+      book.categories?.name?.toLowerCase() === categoryName.toLowerCase()
+    );
+
+    if (existingBook && existingBook.categories) {
+      // Reuse existing category
+      return {
+        id: existingBook.categories.id,
+        name: categoryName.trim(),
+        is_leaf: existingBook.categories.is_leaf || true
+      };
+    }
+
+    // Create new category
+    return {
+      id: Date.now(),
+      name: categoryName.trim(),
+      is_leaf: true
+    };
+  };
 
   // Fetch books on component mount
   useEffect(() => {
     const getBooks = async () => {
       try {
-        console.log('Fetching books...');
+        console.log('=== FETCHING BOOKS ===');
         const data = await booksApi.getAll();
-        console.log('Books data:', data);
-        console.log('Data type:', typeof data);
-        console.log('Is array:', Array.isArray(data));
+        console.log('Books data received:', data);
         if (Array.isArray(data)) {
+          console.log('Books count:', data.length);
+          console.log('Sample book authors:', data[0]?.authors);
           setBooks(data);
         } else {
           console.error('Data is not an array:', data);
@@ -64,6 +115,28 @@ export const useBookManagement = () => {
       setCurrentBook((prev) => ({
         ...prev,
         images: value ? [{ base_url: value }] : []
+      }));
+    } else if (name === 'categories') {
+      // Handle categories as object (value should be the categories object)
+      // If it's a string (from direct input), find or create category
+      if (typeof value === 'string') {
+        const categoryObj = findOrCreateCategory(value);
+        setCurrentBook((prev) => ({ 
+          ...prev, 
+          categories: categoryObj
+        }));
+      } else {
+        // If it's already an object, use it directly
+        setCurrentBook((prev) => ({ 
+          ...prev, 
+          categories: value as any
+        }));
+      }
+    } else if (name === 'authors' || name === 'specifications') {
+      // Handle arrays (value should be the array)
+      setCurrentBook((prev) => ({ 
+        ...prev, 
+        [name]: value as any
       }));
     } else {
       setCurrentBook((prev) => ({ ...prev, [name]: value }));
@@ -102,6 +175,7 @@ export const useBookManagement = () => {
         );
       } else {
         // Add new book with auto-generated ID
+        console.log('=== ADDING NEW BOOK ===');
         const maxId = books.length > 0
           ? Math.max(...books.map(book => parseInt(book.id)))
           : 0;
@@ -124,6 +198,9 @@ export const useBookManagement = () => {
   const handleEdit = (id: string) => {
     const bookToEdit = books.find((b) => b.id === id);
     if (bookToEdit) {
+      // Ensure authors is always an array, even if undefined in the original book
+      const authorsArray = Array.isArray(bookToEdit.authors) ? bookToEdit.authors : [];
+      
       setCurrentBook({
         id: bookToEdit.id,
         name: bookToEdit.name,
@@ -133,7 +210,12 @@ export const useBookManagement = () => {
         original_price: bookToEdit.original_price,
         book_cover: bookToEdit.book_cover,
         rating_average: typeof bookToEdit.rating_average === 'number' ? bookToEdit.rating_average : parseFloat(bookToEdit.rating_average || '0'),
+        images: bookToEdit.images || [],
+        authors: authorsArray,
+        categories: bookToEdit.categories || { id: Date.now(), name: "", is_leaf: true },
+        specifications: bookToEdit.specifications || [],
       });
+      
       setIsEditing(true);
     }
   };
@@ -159,8 +241,22 @@ export const useBookManagement = () => {
       book_cover: null,
       rating_average: 0,
       images: [],
+      authors: [],
+      categories: { id: Date.now(), name: "", is_leaf: true },
+      specifications: [],
     });
     setIsEditing(false);
+  };
+
+  // Helper function to get unique categories for suggestions
+  const getUniqueCategories = () => {
+    const categoryNames = new Set<string>();
+    books.forEach(book => {
+      if (book.categories?.name?.trim()) {
+        categoryNames.add(book.categories.name.trim());
+      }
+    });
+    return Array.from(categoryNames).sort();
   };
 
   return {
@@ -174,5 +270,6 @@ export const useBookManagement = () => {
     handleEdit,
     handleDelete,
     resetForm,
+    getUniqueCategories,
   };
 };

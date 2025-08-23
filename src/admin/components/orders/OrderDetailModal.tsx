@@ -202,14 +202,23 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {order.items?.map((item, index) => (
+                  {order.items?.map((item: any, index: number) => (
                     <tr key={index}>
                       <td className="px-4 py-3">
-                        <div>
-                          <p className="font-medium text-gray-900">{item.productName}</p>
+                        <div className="flex items-center gap-3">
                           {item.productImage && (
-                            <p className="text-sm text-gray-600">Hình ảnh: {item.productImage}</p>
+                            <img
+                              src={item.productImage}
+                              alt={item.productName}
+                              className="w-12 h-12 object-cover rounded-lg border border-gray-200"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                              }}
+                            />
                           )}
+                          <div>
+                            <p className="font-medium text-gray-900">{item.productName}</p>
+                          </div>
                         </div>
                       </td>
                       <td className="px-4 py-3 text-center">{item.quantity}</td>

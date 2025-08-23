@@ -59,22 +59,22 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <div 
-      className={`bg-white border border-gray-300 rounded-lg flex w-full hover:shadow-lg transition-shadow duration-200 cursor-pointer m-2 ${className}`}
+      className={`bg-white border border-gray-300 rounded-lg flex w-full hover:shadow-lg transition-shadow duration-200 cursor-pointer m-1 max-[389px]:m-0.5 overflow-hidden ${className}`}
       onClick={handleClick}
     >
-      <div className="h-full w-full">
-        <a className="product-item block">
-          <span className="block">
+      <div className="h-full w-full flex flex-col">
+        <a className="product-item block w-full">
+          <span className="block w-full">
             {/* Product Image Container */}
-            <div className="relative">
-              <div className="thumbnail">
-                <div className="image-wrapper">
-                  <picture className="webpimg-container">
+            <div className="relative w-full">
+              <div className="thumbnail w-full">
+                <div className="image-wrapper w-full">
+                  <picture className="webpimg-container w-full block">
                     {book.images && book.images.length > 0 ? (
                       <img
                         src={book.images[0].medium_url || book.images[0].base_url}
                         alt={book.name}
-                        className="w-full aspect-square object-cover"
+                        className="w-full aspect-square object-cover block"
                         style={{ opacity: 1 }}
                       />
                     ) : (
@@ -108,17 +108,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
             </div>
 
             {/* Product Content */}
-            <div className="product-card-content p-3">
-              <div className="info">
-                <div className="flex flex-col gap-1">
+            <div className="product-card-content p-3 max-[389px]:p-1.5 w-full max-w-full overflow-hidden box-border">
+              <div className="info w-full max-w-full">
+                <div className="flex flex-col gap-1 max-[389px]:gap-0.5 w-full max-w-full">
                   {/* Product Name */}
-                  <div className="name-wrapper flex flex-col gap-1 h-14">
-                    <h3 className="text-sm font-normal text-gray-800 line-clamp-2 leading-tight">
+                  <div className="name-wrapper flex flex-col gap-1 h-14 max-[389px]:h-8 w-full max-w-full overflow-hidden">
+                    <h3 className="text-sm max-[389px]:text-xs font-normal text-gray-800 line-clamp-2 leading-tight max-[389px]:leading-snug w-full max-w-full break-words overflow-hidden text-ellipsis">
                       {book.name}
                     </h3>
                     
                     {/* Rating Stars */}
-                    <div className="flex items-center">
+                    <div className="flex items-center max-[389px]:hidden">
                       <div className="flex items-center" style={{ fontSize: '12px' }}>
                         <div className="relative flex">
                           {renderStars(Number(book.rating_average || 0))}
@@ -128,23 +128,23 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   </div>
 
                   {/* Price Section */}
-                  <div className="price-section">
-                    <div className="price-discount">
-                      <div className="price-discount__price text-red-500 font-medium text-base">
+                  <div className="price-section w-full max-w-full overflow-hidden">
+                    <div className="price-discount w-full max-w-full">
+                      <div className="price-discount__price text-red-500 font-medium text-base max-[389px]:text-xs max-[389px]:font-semibold w-full max-w-full truncate overflow-hidden">
                         {formatPrice(book.current_seller?.price || book.list_price)}
-                        <sup>₫</sup>
+                        <sup className="max-[389px]:text-xs">₫</sup>
                       </div>
                     </div>
                     
                     {/* Discount and Original Price */}
                     {discountPercentage > 0 && (
-                      <div className="flex gap-1 h-4.5 items-center">
-                        <div className="price-discount__discount bg-red-100 text-red-600 text-xs px-1 py-0.5 rounded">
+                      <div className="flex gap-1 h-4.5 max-[389px]:h-3 items-center w-full max-w-full overflow-hidden">
+                        <div className="price-discount__discount bg-red-100 text-red-600 text-xs max-[389px]:text-xs px-1 py-0.5 max-[389px]:px-0.5 max-[389px]:py-0 rounded flex-shrink-0">
                           -{discountPercentage}%
                         </div>
-                        <div className="price-discount__original-price text-gray-400 text-xs line-through">
+                        <div className="price-discount__original-price text-gray-400 text-xs max-[389px]:text-xs line-through truncate overflow-hidden flex-1 min-w-0">
                           {formatPrice(book.original_price || book.list_price)}
-                          <sup>₫</sup>
+                          <sup className="max-[389px]:text-xs">₫</sup>
                         </div>
                       </div>
                     )}
@@ -153,19 +153,20 @@ const ProductCard: React.FC<ProductCardProps> = ({
               </div>
 
               {/* Additional Info */}
-              <div className="flex flex-col gap-2 mt-2">
-                <div className="flex flex-col gap-1.5">
-                  <div className="h-1"></div>
+              <div className="flex flex-col gap-2 mt-2 max-[389px]:gap-0.5 max-[389px]:mt-0.5 w-full max-w-full overflow-hidden">
+                <div className="flex flex-col gap-1.5 max-[389px]:gap-0.5 w-full max-w-full">
+                  <div className="h-1 max-[389px]:h-0"></div>
                   
                   {/* Delivery Info */}
-                  <div className="delivery-info flex items-center gap-1">
+                  <div className="delivery-info flex items-center gap-1 max-[389px]:gap-0.5 w-full max-w-full overflow-hidden">
                     <img 
                       width="32" 
                       height="16" 
                       src="https://salt.tikicdn.com/ts/tka/a8/31/b6/802e2c99dcce64c67aa2648edb15dd25.png" 
                       alt="tikinow"
+                      className="max-[389px]:w-4 max-[389px]:h-2 flex-shrink-0"
                     />
-                    <span className="text-xs text-gray-600">Giao siêu tốc 2h</span>
+                    <span className="text-xs max-[389px]:text-xs text-gray-600 max-[389px]:hidden truncate overflow-hidden flex-1 min-w-0">Giao siêu tốc 2h</span>
                   </div>
                 </div>
               </div>

@@ -72,18 +72,15 @@ export const useRelatedProducts = ({ currentBook, initialTab = 'category' }: Use
 
       // Get books by same category using getAll and filter client-side
       if (currentBook.categories?.id) {
-        console.log('Fetching related products for category:', currentBook.categories.id, currentBook.categories.name);
         try {
           // Get all books and filter by same category
           const allBooks = await booksApi.getAll();
-          console.log('Total books from API:', allBooks.length);
 
           // Filter by same category and exclude current book
           products = allBooks.filter(book =>
             book.categories?.id === currentBook.categories?.id &&
             book.id !== currentBook.id
           );
-          console.log('Filtered products (same category, excluding current):', products.length, 'items');
         } catch (apiError) {
           console.error('Failed to fetch books:', apiError);
           products = [];

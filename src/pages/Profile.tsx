@@ -21,9 +21,9 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ activeTab, onTabChange 
   const { user } = useAuth();
   
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-6">
-      {/* Profile Header */}
-      <div className="text-center mb-6">
+    <div className="bg-white rounded-lg shadow-sm border p-6 max-[389px]:p-4 max-[389px]:rounded-none max-[389px]:shadow-none">
+      {/* Profile Header - Hidden on mobile */}
+      <div className="text-center mb-6 max-[389px]:hidden">
         <div className="w-16 h-16 rounded-full mx-auto mb-3 overflow-hidden">
           <img
             src="https://salt.tikicdn.com/desktop/img/avatar.png"
@@ -42,40 +42,60 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ activeTab, onTabChange 
         </div>
       </div>
 
+      {/* Mobile Profile Header */}
+      <div className="hidden max-[389px]:flex max-[389px]:items-center max-[389px]:gap-3 max-[389px]:mb-4 max-[389px]:pb-4 max-[389px]:border-b">
+        <div className="w-12 h-12 rounded-full overflow-hidden">
+          <img
+            src="https://salt.tikicdn.com/desktop/img/avatar.png"
+            alt="Avatar"
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-gray-900">
+            {user?.firstName && user?.lastName
+              ? `${user.firstName} ${user.lastName}`
+              : user?.firstName || user?.lastName || 'Người dùng'
+            }
+          </p>
+          <p className="text-xs text-gray-600">Tài khoản của tôi</p>
+        </div>
+      </div>
+
       {/* Navigation Menu */}
-      <nav className="space-y-2">
+      <nav className="space-y-2 max-[389px]:space-y-1">
         <button
           onClick={() => onTabChange('account')}
-          className={`w-full flex items-center gap-3 px-3 py-2 rounded transition-colors ${
+          className={`w-full flex items-center gap-3 px-3 py-2 max-[389px]:px-2 max-[389px]:py-3 rounded transition-colors ${
             activeTab === 'account'
-              ? 'text-gray-700 bg-blue-50 border-l-4 border-blue-500 rounded-r'
+              ? 'text-gray-700 bg-blue-50 border-l-4 border-blue-500 rounded-r max-[389px]:bg-blue-100 max-[389px]:border-l-2'
               : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
           }`}
         >
-          <User className="w-5 h-5" />
-          <span>Thông tin tài khoản</span>
+          <User className="w-5 h-5 max-[389px]:w-4 max-[389px]:h-4" />
+          <span className="max-[389px]:text-sm">Thông tin tài khoản</span>
         </button>
         <button
           onClick={() => onTabChange('notifications')}
-          className={`w-full flex items-center gap-3 px-3 py-2 rounded transition-colors ${
+          className={`w-full flex items-center gap-3 px-3 py-2 max-[389px]:px-2 max-[389px]:py-3 rounded transition-colors ${
             activeTab === 'notifications'
-              ? 'text-gray-700 bg-blue-50 border-l-4 border-blue-500 rounded-r'
+              ? 'text-gray-700 bg-blue-50 border-l-4 border-blue-500 rounded-r max-[389px]:bg-blue-100 max-[389px]:border-l-2'
               : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
           }`}
         >
-          <Bell className="w-5 h-5" />
-          <span>Thông báo của tôi</span>
+          <Bell className="w-5 h-5 max-[389px]:w-4 max-[389px]:h-4" />
+          <span className="max-[389px]:text-sm">Thông báo của tôi</span>
         </button>
         <button
           onClick={() => onTabChange('orders')}
-          className={`w-full flex items-center gap-3 px-3 py-2 rounded transition-colors ${
+          className={`w-full flex items-center gap-3 px-3 py-2 max-[389px]:px-2 max-[389px]:py-3 rounded transition-colors ${
             activeTab === 'orders'
-              ? 'text-gray-700 bg-blue-50 border-l-4 border-blue-500 rounded-r'
+              ? 'text-gray-700 bg-blue-50 border-l-4 border-blue-500 rounded-r max-[389px]:bg-blue-100 max-[389px]:border-l-2'
               : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
           }`}
         >
-          <Package className="w-5 h-5" />
-          <span>Quản lý đơn hàng</span>
+          <Package className="w-5 h-5 max-[389px]:w-4 max-[389px]:h-4" />
+          <span className="max-[389px]:text-sm">Quản lý đơn hàng</span>
         </button>
       </nav>
     </div>
@@ -470,9 +490,9 @@ const Profile: React.FC = () => {
         return <ProfileOrderManagement />;
       case 'notifications':
         return (
-          <div className="bg-white rounded-lg shadow-sm border p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Thông báo của tôi</h2>
-            <p className="text-gray-600">Chưa có thông báo nào.</p>
+          <div className="bg-white rounded-lg shadow-sm border p-6 max-[389px]:p-4 max-[389px]:rounded-none max-[389px]:shadow-none max-[389px]:border-none">
+            <h2 className="text-xl font-bold text-gray-900 mb-4 max-[389px]:text-lg">Thông báo của tôi</h2>
+            <p className="text-gray-600 max-[389px]:text-sm">Chưa có thông báo nào.</p>
           </div>
         );
       default:
@@ -493,13 +513,13 @@ const Profile: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 flex flex-col max-[389px]:bg-white">
       <Header />
 
-      <main className="flex-1 py-8">
-        <div className="max-w-6xl mx-auto px-4">
-          {/* Breadcrumb */}
-          <nav className="mb-6">
+      <main className="flex-1 py-8 max-[389px]:py-2">
+        <div className="max-w-6xl mx-auto px-4 max-[389px]:px-2">
+          {/* Breadcrumb - Hidden on mobile */}
+          <nav className="mb-6 max-[389px]:hidden">
             <ol className="flex items-center space-x-2 text-sm text-gray-600">
               <li>
                 <a href="/" className="hover:text-blue-600">Trang chủ</a>
@@ -511,14 +531,52 @@ const Profile: React.FC = () => {
             </ol>
           </nav>
 
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            {/* Sidebar */}
-            <div className="lg:col-span-1">
-              <ProfileSidebar activeTab={activeTab} onTabChange={setActiveTab} />
+          {/* Mobile Header */}
+          <div className="hidden max-[389px]:block max-[389px]:mb-4">
+            <h1 className="text-lg font-bold text-gray-900">{getBreadcrumbText()}</h1>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 max-[389px]:gap-0 max-[389px]:grid-cols-1">
+            {/* Sidebar - Mobile bottom tabs / Desktop sidebar */}
+            <div className="lg:col-span-1 max-[389px]:order-2 max-[389px]:fixed max-[389px]:bottom-0 max-[389px]:left-0 max-[389px]:right-0 max-[389px]:z-50 max-[389px]:bg-white max-[389px]:border-t max-[389px]:shadow-lg min-[390px]:relative">
+              <div className="max-[389px]:hidden">
+                <ProfileSidebar activeTab={activeTab} onTabChange={setActiveTab} />
+              </div>
+              
+              {/* Mobile Tab Bar */}
+              <div className="hidden max-[389px]:flex max-[389px]:justify-around max-[389px]:py-2">
+                <button
+                  onClick={() => setActiveTab('account')}
+                  className={`flex flex-col items-center px-3 py-1 ${
+                    activeTab === 'account' ? 'text-blue-600' : 'text-gray-600'
+                  }`}
+                >
+                  <User className="w-5 h-5 mb-1" />
+                  <span className="text-xs">Tài khoản</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('notifications')}
+                  className={`flex flex-col items-center px-3 py-1 ${
+                    activeTab === 'notifications' ? 'text-blue-600' : 'text-gray-600'
+                  }`}
+                >
+                  <Bell className="w-5 h-5 mb-1" />
+                  <span className="text-xs">Thông báo</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('orders')}
+                  className={`flex flex-col items-center px-3 py-1 ${
+                    activeTab === 'orders' ? 'text-blue-600' : 'text-gray-600'
+                  }`}
+                >
+                  <Package className="w-5 h-5 mb-1" />
+                  <span className="text-xs">Đơn hàng</span>
+                </button>
+              </div>
             </div>
 
             {/* Main Content */}
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-3 max-[389px]:order-1 max-[389px]:pb-16">
               {renderContent()}
             </div>
           </div>

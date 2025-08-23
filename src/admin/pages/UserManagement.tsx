@@ -56,12 +56,9 @@ const UsersAdmin: React.FC = () => {
         throw new Error('User not found');
       }
 
-      console.log('Changing role for user:', userId, 'to:', newRole);
-
       // API call - send only the role field
       try {
         const updateData = { role: newRole };
-        console.log('Sending role update with data:', updateData);
         await usersApi.update(userId, updateData);
       } catch (apiError: any) {
         console.error('Role update API error:', apiError);
@@ -87,8 +84,6 @@ const UsersAdmin: React.FC = () => {
 
       // Show success toast
       showSuccess(`Đã thay đổi vai trò thành ${newRole === 'admin' ? 'Quản trị viên' : 'Người dùng'}`);
-
-      console.log(`Role updated successfully for user ${userId} to ${newRole}`);
 
     } catch (error: any) {
       console.error('All approaches failed:', error);

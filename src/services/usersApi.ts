@@ -58,11 +58,8 @@ export const usersApi = {
         updatedAt: new Date().toISOString()
       };
       
-      console.log('API updateUser - Request data (should NOT contain password):', updateData);
-      
       // Use PATCH instead of PUT to avoid backend auto-generating password
       const response = await api.patch<User>(`/users/${id}`, updateData);
-      console.log('API updateUser - Response data:', response.data);
       
       return response.data;
     } catch (error) {

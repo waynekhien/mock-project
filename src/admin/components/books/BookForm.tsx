@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BookOpen, DollarSign, Star, Save, X, AlertCircle, User, Tag, Plus, Minus } from 'lucide-react';
 
-interface BookForm {
+interface BookFormData {
   id?: string;
   name: string;
   description: string;
@@ -10,14 +10,14 @@ interface BookForm {
   original_price: number;
   book_cover: string | null;
   rating_average: number;
-  images?: Array<{ base_url: string }>;
+  images: Array<{ base_url: string }>;
   authors: Array<{
-    id?: number;
+    id: number;
     name: string;
-    slug?: string;
+    slug: string;
   }>;
   categories: {
-    id?: number;
+    id: number;
     name: string;
     is_leaf?: boolean;
   };
@@ -32,7 +32,7 @@ interface BookForm {
 }
 
 interface BookFormProps {
-  book: BookForm;
+  book: BookFormData;
   isEditing: boolean;
   onSubmit: (e: React.FormEvent) => void;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
@@ -91,7 +91,14 @@ const BookFormComponent: React.FC<BookFormProps> = ({
 
   const addAuthor = () => {
     if (newAuthor.trim()) {
-      const updatedAuthors = [...(book.authors || []), { name: newAuthor.trim() }];
+      const newAuthorObj = {
+        id: Date.now(), // Generate temporary ID
+        name: newAuthor.trim(),
+        slug: newAuthor.trim().toLowerCase().replace(/\s+/g, '-')
+      };
+      
+      const updatedAuthors = [...(book.authors || []), newAuthorObj];
+      
       onChange({
         target: { name: 'authors', value: updatedAuthors }
       } as any);
@@ -100,7 +107,7 @@ const BookFormComponent: React.FC<BookFormProps> = ({
   };
 
   const removeAuthor = (index: number) => {
-    const updatedAuthors = book.authors.filter((_, i) => i !== index);
+    const updatedAuthors = book.authors.filter((_: any, i: number) => i !== index);
     onChange({
       target: { name: 'authors', value: updatedAuthors }
     } as any);
@@ -295,15 +302,18 @@ const BookFormComponent: React.FC<BookFormProps> = ({
                 <Tag className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="text"
-                  name="categories"
                   placeholder="Nhập danh mục sách"
                   value={book.categories?.name || ''}
-                  onChange={(e) => onChange({
-                    target: {
-                      name: 'categories',
-                      value: { name: e.target.value, is_leaf: false }
-                    }
-                  } as any)}
+                  onChange={(e) => {
+                    // Handle category name change - pass the string value directly
+                    // useBookManagement will handle finding or creating the category
+                    onChange({
+                      target: {
+                        name: 'categories',
+                        value: e.target.value // Pass string directly
+                      }
+                    } as any);
+                  }}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                 />
               </div>

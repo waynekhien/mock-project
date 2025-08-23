@@ -285,7 +285,7 @@ const ProductList: React.FC<ProductListProps> = ({
         </div>
 
         {/* Books Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-8">
+        <div className="grid grid-cols-2 min-[390px]:grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 max-[389px]:gap-1 min-[390px]:gap-6 mb-8">
           {currentBooks.map((book) => (
             <ProductCard
               key={book.id}

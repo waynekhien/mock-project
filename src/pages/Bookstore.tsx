@@ -6,13 +6,13 @@ import ProductFilter from '../components/user/home/ProductFilter';
 const Bookstore: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Banner Carousel Section */}
-      <section className="mb-8">
+      {/* Banner Carousel Section - Hidden on screens smaller than 390px */}
+      <section className="mb-8 hidden min-[390px]:block">
         <BannerCarousel />
       </section>
 
-      {/* Category List Section */}
-      <section className="mb-8">
+      {/* Category List Section - Hidden on screens smaller than 390px */}
+      <section className="mb-8 hidden min-[390px]:block">
         <CategoryList />
       </section>
 

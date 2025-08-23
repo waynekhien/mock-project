@@ -62,11 +62,8 @@ const AccountInfo: React.FC = () => {
   const refreshProfileData = async () => {
     if (!user?.id) return;
     
-    console.log('refreshProfileData called - loading from API...');
-    
     try {
       const userData = await usersApi.getById(user.id.toString());
-      console.log('Refreshed user data:', userData);
       
       // Parse birthDate if available
       let parsedBirthDate = { day: '', month: '', year: '' };
@@ -93,7 +90,6 @@ const AccountInfo: React.FC = () => {
         email: userData.email || ''
       };
       
-      console.log('Setting profile from API:', newProfile);
       setProfile(newProfile);
 
       // Update AuthContext with fresh data
@@ -121,13 +117,11 @@ const AccountInfo: React.FC = () => {
   }, [profile.firstName, profile.lastName]);
 
   const handleInputChange = (field: keyof UserProfile, value: any) => {
-    console.log('handleInputChange:', field, value);
     setProfile(prev => {
       const newProfile = {
         ...prev,
         [field]: value
       };
-      console.log('Updated profile:', newProfile);
       return newProfile;
     });
   };
@@ -171,11 +165,8 @@ const AccountInfo: React.FC = () => {
         phone: profile.phone,
         role: user.role as "admin" | "user"
       };
-
-      console.log('Saving profile data:', updateData);
       
-      const result = await updateUser(user.id.toString(), updateData);
-      console.log('Profile update successful:', result);
+      await updateUser(user.id.toString(), updateData);
       
       // Refresh profile data from API
       await refreshProfileData();
@@ -198,7 +189,6 @@ const AccountInfo: React.FC = () => {
     
     setIsLoading(true);
     try {
-      console.log('Updating phone for user:', user.id, 'with phone:', tempPhone);
       
       // Include ALL current profile data + new phone (except password)
       const updateData = {
@@ -214,8 +204,7 @@ const AccountInfo: React.FC = () => {
         role: user.role as "admin" | "user"
       };
       
-      const result = await updateUser(user.id.toString(), updateData);
-      console.log('Phone update successful:', result);
+      await updateUser(user.id.toString(), updateData);
       
       // Refresh profile data from API
       await refreshProfileData();
@@ -239,7 +228,6 @@ const AccountInfo: React.FC = () => {
     
     setIsLoading(true);
     try {
-      console.log('Updating email for user:', user.id, 'with email:', tempEmail);
       
       // Include ALL current profile data + new email (except password)
       const updateData = {
@@ -255,8 +243,7 @@ const AccountInfo: React.FC = () => {
         role: user.role as "admin" | "user"
       };
       
-      const result = await updateUser(user.id.toString(), updateData);
-      console.log('Email update successful:', result);
+      await updateUser(user.id.toString(), updateData);
       
       // Refresh profile data from API
       await refreshProfileData();
@@ -276,29 +263,29 @@ const AccountInfo: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-8">
-      <h1 className="text-2xl font-semibold text-gray-800 mb-8">Thông tin tài khoản</h1>
+    <div className="bg-white rounded-lg shadow-sm border p-8 max-[389px]:p-4 max-[389px]:rounded-none max-[389px]:shadow-none max-[389px]:border-none">
+      <h1 className="text-2xl font-semibold text-gray-800 mb-8 max-[389px]:text-xl max-[389px]:mb-6">Thông tin tài khoản</h1>
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-[389px]:gap-6">
         {/* Left Column - Personal Info */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="border-b pb-6">
-            <h2 className="text-lg font-medium text-gray-700 mb-4">Thông tin cá nhân</h2>
+        <div className="lg:col-span-2 space-y-6 max-[389px]:space-y-4">
+          <div className="border-b pb-6 max-[389px]:pb-4">
+            <h2 className="text-lg font-medium text-gray-700 mb-4 max-[389px]:text-base max-[389px]:mb-3">Thông tin cá nhân</h2>
             
             {/* Avatar and Name */}
-            <div className="flex items-center gap-6 mb-6">
-              <div className="relative">
-                <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center">
-                  <User className="w-12 h-12 text-blue-500" />
+            <div className="flex items-center gap-6 mb-6 max-[389px]:flex-col max-[389px]:gap-4 max-[389px]:mb-4">
+              <div className="relative max-[389px]:self-center">
+                <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center max-[389px]:w-20 max-[389px]:h-20">
+                  <User className="w-12 h-12 text-blue-500 max-[389px]:w-10 max-[389px]:h-10" />
                 </div>
-                <button className="absolute bottom-0 right-0 w-6 h-6 bg-gray-600 rounded-full flex items-center justify-center text-white">
-                  <Camera className="w-3 h-3" />
+                <button className="absolute bottom-0 right-0 w-6 h-6 bg-gray-600 rounded-full flex items-center justify-center text-white max-[389px]:w-5 max-[389px]:h-5">
+                  <Camera className="w-3 h-3 max-[389px]:w-2.5 max-[389px]:h-2.5" />
                 </button>
               </div>
-              <div className="flex-1">
-                <div className="grid grid-cols-2 gap-4">
+              <div className="flex-1 max-[389px]:w-full">
+                <div className="grid grid-cols-2 gap-4 max-[389px]:grid-cols-1 max-[389px]:gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Họ & Tên</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2 max-[389px]:text-xs">Họ & Tên</label>
                     <input
                       type="text"
                       value={fullNameDisplay}
@@ -321,17 +308,17 @@ const AccountInfo: React.FC = () => {
                           }
                         }
                       }}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent max-[389px]:px-2 max-[389px]:py-1.5 max-[389px]:text-sm"
                       placeholder="Nhập họ và tên"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Nickname</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2 max-[389px]:text-xs">Nickname</label>
                     <input
                       type="text"
                       value={profile.nickname}
                       onChange={(e) => handleInputChange('nickname', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent max-[389px]:px-2 max-[389px]:py-1.5 max-[389px]:text-sm"
                       placeholder="Thêm nickname"
                     />
                   </div>
@@ -340,13 +327,13 @@ const AccountInfo: React.FC = () => {
             </div>
 
             {/* Birth Date */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Ngày sinh</label>
-              <div className="grid grid-cols-3 gap-3 max-w-md">
+            <div className="mb-6 max-[389px]:mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2 max-[389px]:text-xs">Ngày sinh</label>
+              <div className="grid grid-cols-3 gap-3 max-w-md max-[389px]:gap-2">
                 <select
                   value={profile.birthDate.month}
                   onChange={(e) => handleBirthDateChange('month', e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent max-[389px]:px-2 max-[389px]:py-1.5 max-[389px]:text-sm"
                 >
                   <option value="">Tháng</option>
                   {Array.from({length: 12}, (_, i) => (

@@ -57,7 +57,6 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
     const activeFilters = filters.filter(f => f.active).map(f => f.id);
     if (onFiltersChange && activeFilters.length === 0) {
       // Only notify on initial mount if no filters are active
-      console.log('ProductFilter: Initial mount, no active filters');
       onFiltersChange(activeFilters);
     }
   }, []); // Only run on mount
@@ -82,7 +81,6 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
       // Immediately notify parent of change
       if (onFiltersChange) {
         const activeFilters = newFilters.filter(f => f.active).map(f => f.id);
-        console.log('toggleFilter: Active filters:', activeFilters);
         onFiltersChange(activeFilters);
       }
 
@@ -103,7 +101,6 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
 
     // Notify parent that all filters are cleared
     if (onFiltersChange) {
-      console.log('clearAllFilters: Clearing all filters');
       onFiltersChange([]);
     }
   };
@@ -115,7 +112,7 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
       {/* Header */}
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-gray-900">Tất cả sản phẩm</h2>
+          <h2 className="text-xl font-semibold text-gray-900 hidden min-[390px]:block">Tất cả sản phẩm</h2>
           <div className="flex items-center space-x-4">
             {/* Active filters count */}
             {activeFiltersCount > 0 && (
@@ -143,11 +140,12 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
               key={filter.id}
               className="flex items-center space-x-3 cursor-pointer group"
             >
+              {/* Hide checkbox on mobile (< 390px) */}
               <input
                 type="checkbox"
                 checked={filter.active}
                 onChange={() => toggleFilter(filter.id)}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 hidden min-[390px]:block"
               />
               <div className="flex items-center space-x-2">
                 {filter.icon.startsWith('http') ? (
@@ -157,7 +155,8 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
                     className="w-12 h-12 object-contain"
                   />
                 ) : filter.icon === 'star' ? (
-                  <div className="flex space-x-0.5">
+                  /* Hide stars on mobile (< 390px) */
+                  <div className="space-x-0.5 hidden min-[390px]:flex">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <Star 
                         key={star}
@@ -172,7 +171,8 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
                 ) : (
                   <span className="text-2xl">{filter.icon}</span>
                 )}
-                <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
+                {/* Hide text labels on mobile (< 390px) */}
+                <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900 hidden min-[390px]:inline">
                   {filter.label}
                 </span>
               </div>

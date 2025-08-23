@@ -81,44 +81,44 @@ const OrderItem: React.FC<OrderItemProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-6 mb-4 hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-lg shadow-sm border p-6 mb-4 hover:shadow-md transition-shadow max-[389px]:p-4 max-[389px]:rounded-none max-[389px]:shadow-none max-[389px]:border-x-0 max-[389px]:mb-2">
       {/* Header */}
-      <div className="flex justify-between items-start mb-4">
-        <div className="flex items-center gap-3">
-          <span className="text-sm font-medium text-gray-600">Mã đơn hàng:</span>
-          <span className="text-sm font-bold text-gray-900">#{order.id}</span>
-          <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}>
+      <div className="flex justify-between items-start mb-4 max-[389px]:flex-col max-[389px]:gap-2">
+        <div className="flex items-center gap-3 max-[389px]:w-full max-[389px]:justify-between">
+          <span className="text-sm font-medium text-gray-600 max-[389px]:text-xs">Mã đơn hàng:</span>
+          <span className="text-sm font-bold text-gray-900 max-[389px]:text-xs">#{order.id}</span>
+          <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border max-[389px]:px-1 max-[389px]:py-0.5 ${getStatusColor(order.status)}`}>
             {getStatusIcon(order.status)}
-            <span>{getStatusText(order.status)}</span>
+            <span className="max-[389px]:text-xs">{getStatusText(order.status)}</span>
           </div>
         </div>
-        <div className="text-right">
-          <div className="text-sm text-gray-600">Ngày đặt</div>
-          <div className="text-sm font-medium text-gray-900">
+        <div className="text-right max-[389px]:w-full max-[389px]:text-left">
+          <div className="text-sm text-gray-600 max-[389px]:text-xs">Ngày đặt</div>
+          <div className="text-sm font-medium text-gray-900 max-[389px]:text-xs">
             {formatDate(order.createdAt)}
           </div>
         </div>
       </div>
 
       {/* Order Items */}
-      <div className="space-y-3 mb-4">
+      <div className="space-y-3 mb-4 max-[389px]:space-y-2 max-[389px]:mb-3">
         {order.items.slice(0, 2).map((item, index) => (
-          <div key={index} className="flex items-center gap-4">
+          <div key={index} className="flex items-center gap-4 max-[389px]:gap-3">
             <img
               src={item.productImage || '/placeholder-book.jpg'}
               alt={item.productName}
-              className="w-16 h-16 rounded-lg object-cover bg-gray-100 border"
+              className="w-16 h-16 rounded-lg object-cover bg-gray-100 border max-[389px]:w-12 max-[389px]:h-12"
               onError={(e) => {
                 (e.target as HTMLImageElement).src = '/placeholder-book.jpg';
               }}
             />
             <div className="flex-1 min-w-0">
-              <h4 className="text-sm font-medium text-gray-900 truncate">
+              <h4 className="text-sm font-medium text-gray-900 truncate max-[389px]:text-xs">
                 {item.productName}
               </h4>
-              <div className="flex items-center gap-4 mt-1">
-                <span className="text-sm text-gray-600">SL: {item.quantity}</span>
-                <span className="text-sm font-semibold text-gray-900">
+              <div className="flex items-center gap-4 mt-1 max-[389px]:gap-2">
+                <span className="text-sm text-gray-600 max-[389px]:text-xs">SL: {item.quantity}</span>
+                <span className="text-sm font-semibold text-gray-900 max-[389px]:text-xs">
                   {item.total.toLocaleString('vi-VN')} ₫
                 </span>
               </div>
@@ -127,38 +127,38 @@ const OrderItem: React.FC<OrderItemProps> = ({
         ))}
         
         {order.items.length > 2 && (
-          <div className="text-sm text-gray-600 text-center py-2">
+          <div className="text-sm text-gray-600 text-center py-2 max-[389px]:text-xs max-[389px]:py-1">
             và {order.items.length - 2} sản phẩm khác...
           </div>
         )}
       </div>
 
       {/* Footer */}
-      <div className="flex justify-between items-center pt-4 border-t">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1 text-sm text-gray-600">
-            <CreditCard className="w-4 h-4" />
+      <div className="flex justify-between items-center pt-4 border-t max-[389px]:flex-col max-[389px]:gap-3 max-[389px]:pt-3">
+        <div className="flex items-center gap-4 max-[389px]:w-full max-[389px]:gap-2 max-[389px]:text-xs">
+          <div className="flex items-center gap-1 text-sm text-gray-600 max-[389px]:text-xs">
+            <CreditCard className="w-4 h-4 max-[389px]:w-3 max-[389px]:h-3" />
             <span>{order.paymentMethodDisplay || 'Thanh toán tiền mặt'}</span>
           </div>
           {order.deliveryMethod && (
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-gray-600 max-[389px]:text-xs">
               Giao hàng: {order.deliveryMethod}
             </div>
           )}
         </div>
         
-        <div className="flex items-center gap-4">
-          <div className="text-right">
-            <div className="text-sm text-gray-600">Tổng tiền</div>
-            <div className="text-lg font-bold text-red-600">
+        <div className="flex items-center gap-4 max-[389px]:w-full max-[389px]:justify-between max-[389px]:gap-2">
+          <div className="text-right max-[389px]:text-left">
+            <div className="text-sm text-gray-600 max-[389px]:text-xs">Tổng tiền</div>
+            <div className="text-lg font-bold text-red-600 max-[389px]:text-base">
               {order.totalAmount.toLocaleString('vi-VN')} ₫
             </div>
           </div>
           
-          <div className="flex gap-2">
+          <div className="flex gap-2 max-[389px]:w-full max-[389px]:justify-end">
             <button
               onClick={() => onViewDetails(order.id)}
-              className="px-4 py-2 text-sm font-medium text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors max-[389px]:px-3 max-[389px]:py-1 max-[389px]:text-xs"
             >
               Xem chi tiết
             </button>
@@ -166,7 +166,7 @@ const OrderItem: React.FC<OrderItemProps> = ({
             {order.status === 'delivered' && onReorder && (
               <button
                 onClick={() => onReorder(order.id)}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors max-[389px]:px-3 max-[389px]:py-1 max-[389px]:text-xs"
               >
                 Mua lại
               </button>
@@ -175,7 +175,7 @@ const OrderItem: React.FC<OrderItemProps> = ({
             {order.status === 'pending' && onCancelOrder && (
               <button
                 onClick={() => onCancelOrder(order.id)}
-                className="px-4 py-2 text-sm font-medium text-red-600 border border-red-600 rounded-lg hover:bg-red-50 transition-colors"
+                className="px-4 py-2 text-sm font-medium text-red-600 border border-red-600 rounded-lg hover:bg-red-50 transition-colors max-[389px]:px-3 max-[389px]:py-1 max-[389px]:text-xs"
               >
                 Huỷ đơn
               </button>

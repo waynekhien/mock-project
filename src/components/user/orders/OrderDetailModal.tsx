@@ -94,7 +94,6 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
                   onCancelOrder={() => {
                     if (window.confirm('Bạn có chắc chắn muốn huỷ đơn hàng này?')) {
                       // Handle cancel order logic here
-                      console.log('Cancel order:', order.id);
                     }
                   }}
                 />

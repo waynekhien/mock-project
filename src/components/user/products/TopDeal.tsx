@@ -11,11 +11,6 @@ const TopDeal: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Debug logs
-  console.log('TopDeal - bestSellers:', bestSellers);
-  console.log('TopDeal - loading:', bestSellersLoading);
-  console.log('TopDeal - error:', error);
-
   const handleProductClick = useCallback((productId: string) => {
     navigate(`/product/${productId}`);
   }, [navigate]);
@@ -31,12 +26,10 @@ const TopDeal: React.FC = () => {
       try {
         setLoading(true);
         const books = await booksApi.getAll();
-        console.log('TopDeal - fetched books:', books);
         
         // Map bestsellers with full book data including images
         const booksWithImages = bestSellers.map(seller => {
           const fullBook = books.find(book => book.id === seller.id);
-          console.log(`TopDeal - mapping seller ${seller.id}:`, seller, 'fullBook:', fullBook);
           
           if (fullBook) {
             return fullBook; // Use the full book data directly
@@ -75,7 +68,6 @@ const TopDeal: React.FC = () => {
           } as Book;
         });
         
-        console.log('TopDeal - final booksWithImages:', booksWithImages);
         setTopDeals(booksWithImages);
       } catch (err) {
         console.error('Error fetching books with images:', err);

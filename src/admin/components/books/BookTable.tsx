@@ -19,6 +19,7 @@ const BookTable: React.FC<BookTableProps> = ({
     { key: "image", label: "Ảnh", width: "w-20" },
     { key: "id", label: "ID", sortable: true, width: "w-24" },
     { key: "name", label: "Tên sách", sortable: true },
+    { key: "authors", label: "Tác giả" },
     { key: "categories", label: "Danh mục" },
     { key: "list_price", label: "Giá bán", sortable: true },
     { key: "original_price", label: "Giá gốc", sortable: true },
@@ -32,10 +33,16 @@ const BookTable: React.FC<BookTableProps> = ({
       ? book.images[0].base_url
       : null;
 
+    // Format authors
+    const authorsText = book.authors && book.authors.length > 0
+      ? book.authors.map(author => author.name).join(', ')
+      : 'N/A';
+
     return {
       id: book.id,
       image: imageUrl,
       name: book.name,
+      authors: authorsText,
       categories: book.categories?.name || 'N/A',
       list_price: book.list_price ? `${book.list_price.toLocaleString()}đ` : 'N/A',
       original_price: book.original_price ? `${book.original_price.toLocaleString()}đ` : 'N/A',

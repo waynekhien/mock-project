@@ -4,7 +4,8 @@ import {
   Home as HomeIcon,
   User,
   ShoppingCart,
-
+  Menu,
+  Search as SearchIcon,
   ChevronDown,
 } from "lucide-react";
 import { useCart } from "../../contexts/CartContext";
@@ -12,33 +13,26 @@ import { useAuth } from "../../contexts/AuthContext";
 import { LoginModal } from "../ui/LoginModal";
 import { Search } from "../user/search";
 
-const categories = [
-  "điện gia dụng",
-  "xe cộ",
-  "mẹ & bé",
-  "khỏe đẹp",
-  "nhà cửa",
-  "sách",
-  "thể thao",
-  "harry potter",
-  "lịch treo tường 2024",
-  "nguyên nhật ánh",
-];
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
   // Removed searchQuery state - using Search component instead
   const [showAccountDropdown, setShowAccountDropdown] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { totalItems } = useCart();
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setShowAccountDropdown(false);
+      }
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
+        setShowMobileMenu(false);
       }
     };
 
@@ -52,6 +46,10 @@ const Header: React.FC = () => {
 
   const handleHomeClick = () => {
     navigate("/");
+  };
+
+  const handleMobileMenuClick = () => {
+    setShowMobileMenu(!showMobileMenu);
   };
 
   const handleAccountClick = () => {
@@ -83,20 +81,111 @@ const Header: React.FC = () => {
     navigate("/cart");
   };
 
-  const handleCategoryClick = (category: string) => {
-    navigate(`/category/${encodeURIComponent(category)}`);
-  };
+  // const handleCategoryClick = (category: string) => {
+  //   navigate(`/category/${encodeURIComponent(category)}`);
+  // };
   return (
     <>
-      {/* Top notice */}
-      <div className="w-full bg-emerald-50 text-emerald-700 text-xs sm:text-sm py-2 text-center flex items-center justify-center">
-        <span className="mr-2">Freeship đơn từ 45k, giảm nhiều hơn cùng</span>
-        <img 
-          src="https://salt.tikicdn.com/ts/upload/a7/18/8c/910f3a83b017b7ced73e80c7ed4154b0.png" 
-          alt="Freeship Xtra" 
-          className="h-4 inline-block"
-        />
+      {/* Mobile Header for screens < 390px */}
+      <div className="block min-[390px]:hidden bg-blue-500 text-white sticky top-0 z-50">
+        <div className="flex items-center p-3 space-x-3">
+          <div className="relative" ref={mobileMenuRef}>
+            <button 
+              onClick={handleMobileMenuClick}
+              className="p-1"
+              aria-label="Menu"
+            >
+              <Menu size={20} />
+            </button>
+            
+            {/* Mobile Menu Dropdown */}
+            {showMobileMenu && (
+              <div className="absolute left-0 top-full mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                <button
+                  onClick={() => {
+                    navigate("/");
+                    setShowMobileMenu(false);
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  Trang chủ
+                </button>
+                <button
+                  onClick={() => {
+                    if (isAuthenticated) {
+                      navigate("/account");
+                    } else {
+                      setShowLoginModal(true);
+                    }
+                    setShowMobileMenu(false);
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  {isAuthenticated ? "Tài khoản" : "Đăng nhập"}
+                </button>
+                {isAuthenticated && (
+                  <button
+                    onClick={() => {
+                      navigate("/orders");
+                      setShowMobileMenu(false);
+                    }}
+                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                  >
+                    Đơn hàng của tôi
+                  </button>
+                )}
+                {isAuthenticated && (
+                  <>
+                    <hr className="my-1 border-gray-200" />
+                    <button
+                      onClick={() => {
+                        logout();
+                        setShowMobileMenu(false);
+                        navigate("/");
+                      }}
+                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                    >
+                      Đăng xuất
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+          <div className="flex-1 relative">
+            <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+            <input
+              type="text"
+              placeholder="Bạn đang tìm kiếm gì"
+              className="w-full pl-10 pr-4 py-2 rounded-md text-gray-900 text-sm"
+            />
+          </div>
+          <button 
+            onClick={handleCartClick}
+            className="relative"
+            aria-label="Giỏ hàng"
+          >
+            <ShoppingCart size={20} />
+            {totalItems > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                {totalItems}
+              </span>
+            )}
+          </button>
+        </div>
       </div>
+
+      {/* Desktop Header for screens >= 390px */}
+      <div className="hidden min-[390px]:block">
+        {/* Top notice */}
+        <div className="w-full bg-emerald-50 text-emerald-700 text-xs sm:text-sm py-2 text-center flex items-center justify-center">
+          <span className="mr-2">Freeship đơn từ 45k, giảm nhiều hơn cùng</span>
+          <img 
+            src="https://salt.tikicdn.com/ts/upload/a7/18/8c/910f3a83b017b7ced73e80c7ed4154b0.png" 
+            alt="Freeship Xtra" 
+            className="h-4 inline-block"
+          />
+        </div>
 
       {/* Header */}
       <header className="border-b border-slate-200 px-3 pt-3 md:pt-4 w-full">
@@ -202,20 +291,9 @@ const Header: React.FC = () => {
             </nav>
           </div>
 
-          {/* Category scroller */}
-          <div className="flex items-center gap-2 overflow-x-auto py-1 pl-28 text-sm scrollbar-none border-none -mt-6">
-            {categories.map((c) => (
-              <button
-                key={c}
-                onClick={() => handleCategoryClick(c)}
-                className="shrink-0 rounded-full px-2.5 py-1 hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition whitespace-nowrap"
-              >
-                {c}
-              </button>
-            ))}
-          </div>
         </div>
       </header>
+      </div>
 
       {/* Login Modal */}
       <LoginModal 

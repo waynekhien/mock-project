@@ -9,15 +9,10 @@ import type { LoginRequest, LoginResponse } from '../types';
 export const authApi = {
   login: async (credentials: LoginRequest): Promise<LoginResponse> => {
     try {
-      console.log('authApi - login attempt with:', credentials);
       const response = await api.post<LoginResponse>('/login', credentials);
       return response.data;
     } catch (error) {
-      console.log('authApi - login error:', error);
       if (axios.isAxiosError(error)) {
-        console.log('authApi - error response:', error.response?.data);
-        console.log('authApi - error status:', error.response?.status);
-        console.log('authApi - error headers:', error.response?.headers);
       }
       throw new Error(createErrorMessage(error, 'Login failed'));
     }

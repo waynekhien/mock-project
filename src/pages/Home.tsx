@@ -76,13 +76,13 @@ export default function Home() {
     setActiveFilters(filters);
   }, []);
   return (
-    <div className="min-h-screen bg-white text-slate-800">
+    <div className="min-h-screen bg-white text-slate-800 max-[389px]:w-screen max-[389px]:overflow-x-hidden">
       <Header />
 
-      {/* Commitments row */}
+      {/* Commitments row - Hidden on screens smaller than 390px */}
       <section
         aria-label="Cam kết"
-        className="border-b border-slate-100 px-3 w-full"
+        className="border-b border-slate-100 px-3 w-full hidden min-[390px]:block"
       >
         <div className="flex gap-4 overflow-x-auto py-3 md:py-4 scrollbar-none">
           <span className="shrink-0 font-bold bold inline-flex items-center gap-2 text-sky-700">
@@ -105,30 +105,30 @@ export default function Home() {
       </section>
 
       {/* Main layout */}
-      <div className="max-w-7xl mx-auto py-6 space-y-8">
+      <div className="max-w-7xl mx-auto py-6 space-y-8 max-[389px]:py-0 max-[389px]:space-y-0 max-[389px]:mx-0 max-[389px]:max-w-none max-[389px]:w-full">
         {/* Original layout with sidebar */}
-        <div className="flex gap-4">
-          {/* Categories Sidebar - sát bên trái hoàn toàn */}
-          <div className="w-64 flex-shrink-0 pl-4">
+        <div className="flex gap-4 max-[389px]:flex-col max-[389px]:gap-0 max-[389px]:w-full">
+          {/* Categories Sidebar - sát bên trái hoàn toàn - Hidden on screens smaller than 390px */}
+          <div className="w-64 flex-shrink-0 pl-4 hidden min-[390px]:block">
             <div className="bg-white rounded-lg shadow-sm border border-gray-300 p-4">
               <Categories onCategorySelect={handleCategorySelect} />
             </div>
           </div>
 
           {/* Main Content */}
-          <div className="flex-1 space-y-4 pr-4">
+          <div className="flex-1 space-y-4 pr-4 max-[389px]:pr-0 max-[389px]:space-y-0 max-[389px]:w-full max-[389px]:flex-none">
             {/* Banner Carousel - ô riêng biệt */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-300 p-6">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-300 p-6 hidden min-[390px]:block">
               <BannerCarousel />
             </div>
 
-            {/* Category List - ô riêng biệt */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-300 p-6">
+            {/* Category List - ô riêng biệt - Hidden on screens smaller than 390px */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-300 p-6 hidden min-[390px]:block">
               <CategoryList />
             </div>
 
             {/* Product Filter - ô riêng biệt */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-300">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-300 max-[389px]:w-full max-[389px]:max-w-full max-[389px]:overflow-hidden max-[389px]:rounded-none max-[389px]:border-x-0 max-[389px]:shadow-none max-[389px]:mx-0">
               <ProductFilter
                 onSortChange={handleSortChange}
                 onFiltersChange={handleFiltersChange}
@@ -136,23 +136,28 @@ export default function Home() {
             </div>
 
             {/* Product List - riêng biệt, không có border */}
-            <ProductList
-              selectedCategory={selectedCategory}
-              searchQuery={searchQuery}
-              sortBy={sortBy}
-              activeFilters={activeFilters}
-              onBookClick={handleBookClick}
-            />
+            <div className="max-[389px]:w-full max-[389px]:max-w-full max-[389px]:overflow-hidden max-[389px]:mx-0">
+              <ProductList
+                selectedCategory={selectedCategory}
+                searchQuery={searchQuery}
+                sortBy={sortBy}
+                activeFilters={activeFilters}
+                onBookClick={handleBookClick}
+              />
+            </div>
             
-            {/* Top Best Sellers */}
-            <div className="mt-8">
+            {/* Top Best Sellers - Hidden on screens smaller than 390px */}
+            <div className="mt-8 hidden min-[390px]:block">
               <TopBestSellers />
             </div>
           </div>
         </div>
       </div>
       
-      <Footer />
+      {/* Footer - Hidden on screens smaller than 390px */}
+      <div className="hidden min-[390px]:block">
+        <Footer />
+      </div>
     </div>
   );
 }

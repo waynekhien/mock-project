@@ -90,8 +90,6 @@ const ProductDetail: React.FC = () => {
       return;
     }
     
-    console.log('🛒 Adding to cart - Book:', book.name, 'Quantity:', quantity);
-    
     // Lấy ảnh tốt nhất có sẵn
     const getImageUrl = () => {
       if (book.book_cover) return book.book_cover;
@@ -116,16 +114,12 @@ const ProductDetail: React.FC = () => {
 
     // Thông tin khách hàng sẽ được lấy từ userId trong CartContext
     
-    console.log('🛒 CartItem data:', cartItem);
-    
     try {
       // Add product to cart with specified quantity
-      console.log('🛒 Adding', quantity, 'items to cart...');
       
       // Gọi addToCart chỉ 1 lần với quantity đúng
       await addToCart(cartItem, quantity);
       
-      console.log('✅ Successfully added', quantity, 'items to cart');
       showSuccess(`Đã thêm ${quantity} cuốn "${book.name}" vào giỏ hàng!`);
     } catch (error) {
       console.error('❌ Error adding to cart:', error);
@@ -270,20 +264,22 @@ const ProductDetail: React.FC = () => {
   const discountPercentage = getDiscountPercentage();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 max-[389px]:bg-white">
       <Header />
 
-      <main className="container mx-auto px-4 py-4">
-        {/* Breadcrumb */}
-        <Breadcrumb
-          categoryName={book.categories?.name || 'Sách'}
-          productName={book.name}
-          onNavigateHome={() => navigate('/')}
-        />
+      <main className="container mx-auto px-4 max-[389px]:px-0 py-4 max-[389px]:py-0">
+        {/* Breadcrumb - Hidden on mobile */}
+        <div className="hidden min-[390px]:block">
+          <Breadcrumb
+            categoryName={book.categories?.name || 'Sách'}
+            productName={book.name}
+            onNavigateHome={() => navigate('/')}
+          />
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 max-[389px]:gap-0 max-[389px]:block">
           {/* Left Column - Product Images (3 columns - smaller) */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-3 max-[389px]:w-full">
             <ProductImageGallery
               images={book.images}
               productName={book.name}
@@ -295,7 +291,7 @@ const ProductDetail: React.FC = () => {
           </div>
 
           {/* Middle Column - Product Information (6 columns - wider) */}
-          <div className="lg:col-span-6 space-y-6">
+          <div className="lg:col-span-6 space-y-6 max-[389px]:space-y-3 max-[389px]:px-3">
             {/* Product Title, Author, Rating, Price */}
             <ProductBasicInfo
               book={book}
@@ -303,36 +299,42 @@ const ProductDetail: React.FC = () => {
               formatPrice={formatPrice}
             />
 
-            {/* Product Details Table */}
-            <ProductDetails book={book} />
+            {/* Product Details Table - Hidden on mobile */}
+            <div className="hidden min-[390px]:block">
+              <ProductDetails book={book} />
+            </div>
 
             {/* Product Description */}
             <ProductDescription book={book} />
 
-
-
-            {/* Related Products */}
-            <div className="mt-8">
+            {/* Related Products - Hidden on mobile */}
+            <div className="mt-8 hidden min-[390px]:block">
               <RelatedProducts 
                 currentBook={book}
                 onProductClick={(productId: string) => navigate(`/product/${productId}`)}
               />
             </div>
 
-            {/* Top Deal - Giá Tốt Hôm Nay */}
-            <div className="mt-8">
+            {/* Top Deal - Giá Tốt Hôm Nay - Hidden on mobile */}
+            <div className="mt-8 hidden min-[390px]:block">
               <TopDeal />
             </div>
 
-            {/* Purchase Policy */}
-            <PurchasePolicy />
+            {/* Purchase Policy - Hidden on mobile */}
+            <div className="hidden min-[390px]:block">
+              <PurchasePolicy />
+            </div>
           </div>
 
           {/* Right Column - Purchase Section (3 columns) */}
-          <div className="lg:col-span-3">
-            <div className="sticky top-4 space-y-4">
-              {/* Seller Information */}
-              {book.current_seller && <SellerInfo seller={book.current_seller} />}
+          <div className="lg:col-span-3 max-[389px]:fixed max-[389px]:bottom-0 max-[389px]:left-0 max-[389px]:right-0 max-[389px]:z-50 max-[389px]:bg-white max-[389px]:border-t max-[389px]:border-gray-200 max-[389px]:shadow-lg">
+            <div className="sticky top-4 space-y-4 max-[389px]:space-y-0 max-[389px]:static">
+              {/* Seller Information - Hidden on mobile */}
+              {book.current_seller && (
+                <div className="hidden min-[390px]:block">
+                  <SellerInfo seller={book.current_seller} />
+                </div>
+              )}
               
               {/* Purchase Section */}
               <PurchaseSection
@@ -346,7 +348,10 @@ const ProductDetail: React.FC = () => {
         </div>
       </main>
 
-      <Footer />
+      {/* Footer - Hidden on mobile */}
+      <div className="hidden min-[390px]:block">
+        <Footer />
+      </div>
 
       {/* Login Modal */}
       <LoginModal 

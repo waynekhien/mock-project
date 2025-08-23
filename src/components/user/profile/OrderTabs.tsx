@@ -24,26 +24,28 @@ const OrderTabs: React.FC<OrderTabsProps> = ({ activeTab, onTabChange, orderCoun
   ];
 
   return (
-    <div className="border rounded-lg overflow-hidden">
-      <div className="flex border-b bg-gray-50">
+    <div className="border rounded-lg overflow-hidden max-[389px]:border-none max-[389px]:rounded-none">
+      <div className="flex border-b bg-gray-50 max-[389px]:overflow-x-auto max-[389px]:scrollbar-hide max-[389px]:bg-white max-[389px]:border-b-0 max-[389px]:px-2">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => onTabChange(tab.id)}
             className={`
-              flex-1 px-4 py-3 text-sm font-medium text-center border-b-2 transition-colors
+              flex-1 px-4 py-3 text-sm font-medium text-center border-b-2 transition-colors whitespace-nowrap
+              max-[389px]:flex-none max-[389px]:px-3 max-[389px]:py-2 max-[389px]:text-xs max-[389px]:border-b-0
+              max-[389px]:bg-gray-100 max-[389px]:rounded-full max-[389px]:mr-2 max-[389px]:border-0
               ${activeTab === tab.id
-                ? 'border-blue-500 text-blue-600 bg-blue-50'
-                : 'border-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-50'
+                ? 'border-blue-500 text-blue-600 bg-blue-50 max-[389px]:bg-blue-100 max-[389px]:text-blue-700'
+                : 'border-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-50 max-[389px]:text-gray-700 max-[389px]:hover:bg-gray-200'
               }
             `}
           >
             <span>{tab.label}</span>
             {tab.count !== undefined && tab.count > 0 && (
               <span className={`
-                ml-2 px-2 py-1 text-xs rounded-full
+                ml-2 px-2 py-1 text-xs rounded-full max-[389px]:ml-1 max-[389px]:px-1 max-[389px]:text-xs
                 ${activeTab === tab.id
-                  ? 'bg-blue-100 text-blue-600'
+                  ? 'bg-blue-100 text-blue-600 max-[389px]:bg-blue-200'
                   : 'bg-gray-100 text-gray-600'
                 }
               `}>

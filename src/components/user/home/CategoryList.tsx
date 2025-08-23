@@ -26,9 +26,8 @@ const CategoryList: React.FC = () => {
     fetchCategories();
   }, []);
 
-  const handleCategoryClick = (category: Category) => {
+  const handleCategoryClick = (_category: Category) => {
     // Handle category navigation
-    console.log('Navigate to category:', category.slug);
   };
 
   if (loading) {

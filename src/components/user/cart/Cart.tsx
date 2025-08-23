@@ -27,7 +27,6 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
   };
 
   const handleCheckout = () => {
-    console.log('Proceeding to checkout...');
     onClose();
   };
 
@@ -88,7 +87,6 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                   {/* Items List */}
                   <div className="flex-1 overflow-y-auto p-4 space-y-4">
                     {items.map((item) => {
-                      console.log('Cart item:', item); // Debug log
                       return (
                       <motion.div
                         key={item.id}
