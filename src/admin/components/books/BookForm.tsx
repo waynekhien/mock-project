@@ -102,6 +102,7 @@ const BookFormComponent: React.FC<BookFormProps> = ({
       onChange({
         target: { name: 'authors', value: updatedAuthors }
       } as any);
+      
       setNewAuthor('');
     }
   };
@@ -302,18 +303,10 @@ const BookFormComponent: React.FC<BookFormProps> = ({
                 <Tag className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="text"
+                  name="categories"
                   placeholder="Nhập danh mục sách"
                   value={book.categories?.name || ''}
-                  onChange={(e) => {
-                    // Handle category name change - pass the string value directly
-                    // useBookManagement will handle finding or creating the category
-                    onChange({
-                      target: {
-                        name: 'categories',
-                        value: e.target.value // Pass string directly
-                      }
-                    } as any);
-                  }}
+                  onChange={onChange}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                 />
               </div>

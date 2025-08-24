@@ -52,44 +52,12 @@ export const useBookManagement = () => {
     specifications: []
   });
 
-  // Helper function to find or create category
-  const findOrCreateCategory = (categoryName: string) => {
-    if (!categoryName.trim()) {
-      return { id: Date.now(), name: "", is_leaf: true };
-    }
-
-    // Look for existing category with same name (case-insensitive)
-    const existingBook = books.find(book => 
-      book.categories?.name?.toLowerCase() === categoryName.toLowerCase()
-    );
-
-    if (existingBook && existingBook.categories) {
-      // Reuse existing category
-      return {
-        id: existingBook.categories.id,
-        name: categoryName.trim(),
-        is_leaf: existingBook.categories.is_leaf || true
-      };
-    }
-
-    // Create new category
-    return {
-      id: Date.now(),
-      name: categoryName.trim(),
-      is_leaf: true
-    };
-  };
-
   // Fetch books on component mount
   useEffect(() => {
     const getBooks = async () => {
       try {
-        console.log('=== FETCHING BOOKS ===');
         const data = await booksApi.getAll();
-        console.log('Books data received:', data);
         if (Array.isArray(data)) {
-          console.log('Books count:', data.length);
-          console.log('Sample book authors:', data[0]?.authors);
           setBooks(data);
         } else {
           console.error('Data is not an array:', data);
@@ -117,14 +85,36 @@ export const useBookManagement = () => {
         images: value ? [{ base_url: value }] : []
       }));
     } else if (name === 'categories') {
-      // Handle categories as object (value should be the categories object)
-      // If it's a string (from direct input), find or create category
+      // Handle categories as string input - find existing or create new
       if (typeof value === 'string') {
-        const categoryObj = findOrCreateCategory(value);
-        setCurrentBook((prev) => ({ 
-          ...prev, 
-          categories: categoryObj
-        }));
+        // Look for existing category with same name (case-insensitive)
+        const existingBook = books.find(book => 
+          book.categories?.name?.toLowerCase() === value.toLowerCase()
+        );
+
+        if (existingBook && existingBook.categories && value.trim()) {
+          // Reuse existing category
+          setCurrentBook((prev) => ({ 
+            ...prev, 
+            categories: {
+              id: existingBook.categories.id,
+              name: value.trim(),
+              is_leaf: existingBook.categories.is_leaf || true
+            }
+          }));
+        } else {
+          // Create new category or update current one
+          setCurrentBook((prev) => ({ 
+            ...prev, 
+            categories: {
+              ...prev.categories,
+              name: value,
+              // Keep existing ID if we're just updating the name, create new if it's a new category
+              id: prev.categories?.id || Date.now(),
+              is_leaf: true
+            }
+          }));
+        }
       } else {
         // If it's already an object, use it directly
         setCurrentBook((prev) => ({ 
@@ -175,7 +165,6 @@ export const useBookManagement = () => {
         );
       } else {
         // Add new book with auto-generated ID
-        console.log('=== ADDING NEW BOOK ===');
         const maxId = books.length > 0
           ? Math.max(...books.map(book => parseInt(book.id)))
           : 0;
