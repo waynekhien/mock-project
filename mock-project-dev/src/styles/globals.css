@@ -1,0 +1,17 @@
+/* Xóa nền autofill trên Chrome/Edge/Safari */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+  box-shadow: 0 0 0px 1000px transparent inset !important;
+  -webkit-text-fill-color: #111827 !important; /* text-gray-900 */
+  background-color: transparent !important;
+  transition: background-color 9999s ease-out 0s !important;
+  background-clip: padding-box !important;
+}
+
+/* Firefox */
+input:autofill {
+  background: transparent !important;
+  box-shadow: 0 0 0px 1000px transparent inset !important;
+}
