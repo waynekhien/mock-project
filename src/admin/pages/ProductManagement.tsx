@@ -190,9 +190,9 @@ const ProductsAdmin: React.FC = () => {
             <BookForm
               book={{
                 ...currentBook,
-                authors: currentBook.authors || [],
-                categories: currentBook.categories || { id: Date.now(), name: "", is_leaf: false },
-                specifications: currentBook.specifications || []
+                authors: [],
+                categories: { name: "", is_leaf: false },
+                specifications: []
               } as any}
               isEditing={isEditing}
               onSubmit={handleFormSubmit}

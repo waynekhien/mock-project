@@ -81,9 +81,6 @@ const Header: React.FC = () => {
     navigate("/cart");
   };
 
-  // const handleCategoryClick = (category: string) => {
-  //   navigate(`/category/${encodeURIComponent(category)}`);
-  // };
   return (
     <>
       {/* Mobile Header for screens < 390px */}
