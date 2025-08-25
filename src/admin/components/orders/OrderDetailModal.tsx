@@ -195,21 +195,32 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Sản phẩm</th>
-                    <th className="px-4 py-3 text-center text-sm font-medium text-gray-700">Số lượng</th>
-                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">Đơn giá</th>
-                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">Thành tiền</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 w-1/2">Sản phẩm</th>
+                    <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 w-1/6">Số lượng</th>
+                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-700 w-1/6">Đơn giá</th>
+                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-700 w-1/6">Thành tiền</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {order.items?.map((item, index) => (
                     <tr key={index}>
                       <td className="px-4 py-3">
-                        <div>
-                          <p className="font-medium text-gray-900">{item.productName}</p>
+                        <div className="flex items-center gap-3">
                           {item.productImage && (
-                            <p className="text-sm text-gray-600">Hình ảnh: {item.productImage}</p>
+                            <img 
+                              src={item.productImage} 
+                              alt={item.productName}
+                              className="w-16 h-16 object-cover rounded-md border border-gray-200"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                              }}
+                            />
                           )}
+                          <div>
+                            <p className="font-medium text-gray-900">{item.productName}</p>
+                            <p className="text-sm text-gray-600">Mã SP: {item.productId}</p>
+                          </div>
                         </div>
                       </td>
                       <td className="px-4 py-3 text-center">{item.quantity}</td>
